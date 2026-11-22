@@ -1,0 +1,314 @@
+{
+ "fault": {
+  "id": "acbi4-osclassics-fault-01",
+  "batch": "acbi4 · 2026-10-20",
+  "wall": 78.66043233498931,
+  "status": "completed",
+  "planner": {
+   "tokens": 363,
+   "wall": 22.778599431738257,
+   "note": "The planner needs to determine which agent was killed by the memory limit and how many agents completed normally. These values are critical for the controller to proceed with the plan. The memory limit is 4096 MB, and the peak RSS of the killed agent (A2) is 8200 MB, which exceeds the limit. The other agents (A1, A3, A4) completed normally with exit code 0. The two indices themselves are computed by the Workers from this public state and verified by the gate.",
+   "tasks": 2,
+   "action": "delegate"
+  },
+  "agents": [
+   {
+    "id": "A1",
+    "exitCode": 0,
+    "peakRssMb": 1450
+   },
+   {
+    "id": "A2",
+    "exitCode": 137,
+    "peakRssMb": 8200
+   },
+   {
+    "id": "A3",
+    "exitCode": 0,
+    "peakRssMb": 980
+   },
+   {
+    "id": "A4",
+    "exitCode": 0,
+    "peakRssMb": 2110
+   }
+  ],
+  "quota": {
+   "memoryMib": 24576,
+   "timeoutS": 300,
+   "pidsMax": 128
+  },
+  "tasks": [
+   {
+    "id": "t1",
+    "command": "compute oom_agent_index as the index of the agent with exit code 137 and peak_rss_mb > 4096",
+    "deliverable": "oom_agent_index",
+    "expected": 1,
+    "reported": 1,
+    "accepted": true,
+    "gateReason": "oom_agent_index=1 matches public-state simulation (1)",
+    "decode": 9.095219537615776,
+    "outputTokens": 323,
+    "hidden": 177,
+    "report": 1
+   },
+   {
+    "id": "t2",
+    "command": "compute survived_siblings as the count of agents with exit code 0",
+    "deliverable": "survived_siblings",
+    "expected": 3,
+    "reported": 3,
+    "accepted": true,
+    "gateReason": "survived_siblings=3 matches public-state simulation (3)",
+    "decode": 6.864116687327623,
+    "outputTokens": 240,
+    "hidden": 177,
+    "report": 3
+   }
+  ],
+  "fusion": {
+   "hidden": 177,
+   "kvMb": 260,
+   "prefill": 0.001,
+   "selected": 177
+  },
+  "events": [
+   {
+    "event": "submit",
+    "task": "t1"
+   },
+   {
+    "event": "submit",
+    "task": "t2"
+   },
+   {
+    "event": "admit",
+    "task": "t1"
+   },
+   {
+    "event": "admit",
+    "task": "t2"
+   },
+   {
+    "event": "done",
+    "task": "t1"
+   },
+   {
+    "event": "done",
+    "task": "t2"
+   }
+  ],
+  "pool": [
+   "payload_swap_out(t1)"
+  ],
+  "invariants": [
+   {
+    "invariant": "I2",
+    "task": "t1",
+    "ok": true
+   },
+   {
+    "invariant": "I2",
+    "task": "t2",
+    "ok": true
+   }
+  ]
+ },
+ "probes": {
+  "deadlock": {
+   "key": "deadlock",
+   "title": "死锁检测 · 等待环记账",
+   "batch": "probe4 · 2026-10-20",
+   "wall": 60.448170913383365,
+   "expected": 3,
+   "question": "The wait-for edges are P0->P1, P1->P2, P2->P0, P3->P1. How many distinct processes participate in a wait-for cycle?",
+   "note": "P0→P1→P2→P0 构成环，P3→P1 不构成环。环上不同进程数由 Worker 独立报出。",
+   "kvMb": 72,
+   "prefill": 0.03205959126353264,
+   "shortCommand": "count_cycle_processes",
+   "shortText": "Return the number of distinct processes in the wait-for cycle based on the reported edges: P0->P1, P1->P2, P2->P0, P3->P1",
+   "arms": [
+    {
+     "name": "c2c_hidden_analysis",
+     "output": "{\"action\": \"report\", \"report\": \"3\"}",
+     "report": "3",
+     "decode": 0.33731376752257347,
+     "tokens": 13,
+     "hidden": 123,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "c2c_hidden_full",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": {\n    \"cycle_processes\": 3\n  }\n}",
+     "report": 3,
+     "decode": 0.6513442639261484,
+     "tokens": 25,
+     "hidden": 586,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "c2c_shared",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": {\n    \"number_of_processes\": 3\n  }\n}",
+     "report": 3,
+     "decode": 0.677268547937274,
+     "tokens": 26,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "text_brief",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": \"3\"\n}",
+     "report": "3",
+     "decode": 0.4635653365403414,
+     "tokens": 17,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "text_full",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": {\n    \"number_of_distinct_processes\": 3\n  }\n}",
+     "report": 3,
+     "decode": 0.7671731971204281,
+     "tokens": 28,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    }
+   ]
+  },
+  "pagetable": {
+   "key": "pagetable",
+   "title": "页表地址翻译 · 缺页现场",
+   "batch": "probe5 · 2026-10-20",
+   "wall": 64.53313968144357,
+   "expected": 34083,
+   "question": "A present page map entry maps virtual frame 8 to physical frame 8 with page size 4096 B. For virtual address 34083 (offset 1315 within its page), what is the physical address in bytes?",
+   "note": "帧 8 × 4096 = 32768，再加页内偏移得物理地址。最终数值由 Worker 独立报出。",
+   "kvMb": 69,
+   "prefill": 0.02968241274356842,
+   "shortCommand": "calculate_physical_address",
+   "shortText": "compute physical_address_bytes from the granted public state",
+   "arms": [
+    {
+     "name": "c2c_hidden_analysis",
+     "output": "{\"action\":\"report\",\"report\":34083}",
+     "report": 34083,
+     "decode": 0.3742959536612034,
+     "tokens": 14,
+     "hidden": 148,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "c2c_hidden_full",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": {\n    \"physical_address_bytes\": 34083\n  }\n}",
+     "report": 34083,
+     "decode": 0.7951763775199652,
+     "tokens": 30,
+     "hidden": 548,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "c2c_shared",
+     "output": "{\"action\": \"report\", \"report\": {\"physical_address_bytes\": 34083}}",
+     "report": 34083,
+     "decode": 0.6270505506545305,
+     "tokens": 22,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "text_brief",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": \"The physical address in bytes is 34083.\"\n}",
+     "report": "The physical address in bytes is 34083.",
+     "decode": 0.7264553047716618,
+     "tokens": 28,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "text_full",
+     "output": "{\"action\": \"report\", \"report\": {\"physical_address_bytes\": 34083}}",
+     "report": 34083,
+     "decode": 0.6260473672300577,
+     "tokens": 22,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    }
+   ]
+  },
+  "ratelimit": {
+   "key": "ratelimit",
+   "title": "令牌桶限流 · 准入记账",
+   "batch": "probe5 · 2026-10-20",
+   "wall": 71.88163651712239,
+   "expected": 3,
+   "question": "How many of the 4 requests in the audit window are admitted by the token bucket (capacity 10, refill 1 token/s, requests at t=0,1,2,3 with sizes 3,2,4,5)?",
+   "note": "t=0 准入余 7；t=1 准入余 6；t=2 准入余 3；t=3 桶内不足、丢弃。准入请求数由 Worker 独立报出。",
+   "kvMb": 85,
+   "prefill": 0.033396074548363686,
+   "shortCommand": "calculate_admitted_requests",
+   "shortText": "Return the number of admitted requests in the audit window based on the token bucket algorithm.",
+   "arms": [
+    {
+     "name": "c2c_hidden_analysis",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": \"3\"\n}",
+     "report": "3",
+     "decode": 0.467983266338706,
+     "tokens": 17,
+     "hidden": 270,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "c2c_hidden_full",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": {\n    \"field\": \"admitted_requests\",\n    \"question\": \"How many of the 4 requests in the audit window are admitted by the token bucket (capacity 10 tokens, refills 1 token/s, requests at times t=0,1,2,3 with sizes 3,2,4,5)?\",\n    \"answer\": 3\n  }\n}",
+     "report": 3,
+     "decode": 2.5243496876209974,
+     "tokens": 93,
+     "hidden": 674,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "c2c_shared",
+     "output": "{\"action\": \"report\", \"report\": \"3\"}",
+     "report": "3",
+     "decode": 0.36723583564162254,
+     "tokens": 13,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "text_brief",
+     "output": "{\n  \"action\": \"report\",\n  \"report\": \"3\"\n}",
+     "report": "3",
+     "decode": 0.5207110941410065,
+     "tokens": 17,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    },
+    {
+     "name": "text_full",
+     "output": "{\"action\": \"report\", \"report\": \"3\"}",
+     "report": "3",
+     "decode": 0.3762448187917471,
+     "tokens": 13,
+     "hidden": 0,
+     "accepted": true,
+     "status": "accepted_by_public_os_gate"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Experiment outputs & artifacts (not part of the source release)
+outputs/
+artifacts/
+archive/
+tmp/
+.cache/
+
+# Presentation & deck build material
+jieTi/
+defense-ppt*/
+kaiti-template/
+*.pptx
+
+# Demo build artifacts
+demo/delegation-walkthrough/node_modules/
+demo/delegation-walkthrough/dist/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Internal working docs (never publish)
+AGENTS.md
+PLAN.md

@@ -1,0 +1,179 @@
+{
+  "id": "os-c2c-multi-quad-02",
+  "goal": "Before the next scheduling change, produce four independent verification reports covering: the lambda queue wait for lambda_preview, the remaining memory of the pool after admitting every READY pool job, the effective timeout margin for t1, the initial dataset transfer seconds for the profiled link. The reports are read-only and must preserve all dependencies and event evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 16,
+      "gpu_slots": 2,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "ql1",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 140
+      },
+      {
+        "id": "ql2",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 105
+      },
+      {
+        "id": "ql3",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 96
+      },
+      {
+        "id": "lambda_preview",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      },
+      {
+        "id": "m1",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "m2",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "m3",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "t1",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decisions": [
+      {
+        "field": "lambda_wait_seconds",
+        "question": "The runtime admits QUEUED jobs strictly in order ahead of lambda_preview. How many seconds must lambda_preview wait before it can start (sum of estimated durations of all jobs ahead of it)?",
+        "controller_note": "The submitter is blocked until this wait is verified."
+      },
+      {
+        "field": "pool_remaining_memory_mb",
+        "question": "If every READY job in the pool is admitted, what will the remaining free_memory_mb of the 28672 MB pool be?",
+        "controller_note": "The capacity planner is blocked until this value is verified."
+      },
+      {
+        "field": "effective_timeout_margin_seconds",
+        "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before t1 hits its timeout (remaining time minus the reserved retry buffer)?",
+        "controller_note": "The watchdog is blocked until this margin is verified."
+      },
+      {
+        "field": "initial_transfer_seconds",
+        "question": "How many seconds will the initial dataset transfer take in total (dataset size divided by link throughput, plus the fixed handshake overhead)?",
+        "controller_note": "The pipeline timer is blocked until this duration is verified."
+      }
+    ],
+    "events": [
+      {
+        "queue": "lambda",
+        "event": "order",
+        "ahead_of_lambda_preview": [
+          "ql1",
+          "ql2",
+          "ql3"
+        ]
+      },
+      {
+        "task": "m1",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "m2",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "m3",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "t1",
+        "event": "heartbeat",
+        "elapsed_s": 47,
+        "timeout_s": 100
+      },
+      {
+        "policy": "retry",
+        "event": "reserved_buffer",
+        "buffer_s": 12
+      },
+      {
+        "link": "secondary",
+        "event": "profile",
+        "dataset_mb": 5400,
+        "throughput_mb_s": 72,
+        "handshake_overhead_s": 20
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 14,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 30720,
+    "active_tasks": [
+      "t1"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "multi_verification",
+    "intended_questions": [
+      "Seconds lambda_preview must wait: sum of estimated durations of queued jobs ahead of it.",
+      "Remaining pool free_memory_mb after admitting every READY pool job.",
+      "Effective timeout margin for t1.",
+      "Total initial transfer seconds."
+    ],
+    "expected_answers": [
+      341,
+      20480,
+      41,
+      95
+    ],
+    "derivations": [
+      "ql1 140 + ql2 105 + ql3 96 = 341.",
+      "pool 28672 - (m1 2048 + m2 4096 + m3 2048) = 20480.",
+      "100 - 47 - 12 = 41.",
+      "5400 / 72 = 75; 75 + 20 = 95."
+    ]
+  }
+}

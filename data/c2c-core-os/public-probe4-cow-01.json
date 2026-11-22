@@ -1,0 +1,62 @@
+{
+ "id": "os-c2c-probe4-cow-01",
+ "goal": "Bring the public memory ledger to a verified next step while preserving copy-on-write sharing and per-process write fault accounting.",
+ "public_background": {
+  "runtime": {
+   "page_size_bytes": 4096,
+   "parent_rss_pages_before_fork": 8192,
+   "cow_policy": "After fork, parent and child share every page read-only. A write to a shared page faults and allocates one private copy (one extra physical page) in the writing process only.",
+   "fork_time_s": 0,
+   "ledger_window_s": 60
+  },
+  "tasks": [
+   {
+    "id": "fault_tally",
+    "state": "READY",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 256,
+    "duration_s": 8
+   },
+   {
+    "id": "ledger_flush",
+    "state": "BLOCKED",
+    "depends_on": [
+     "fault_tally"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "duration_s": 4
+   }
+  ],
+  "pending_decision": {
+   "field": "cow_extra_bytes",
+   "question": "After fork, the child wrote 640 distinct pages and the parent wrote 96 other distinct pages. How many bytes of additional physical memory were allocated by copy-on-write duplication (page size 4096 B)?",
+   "controller_note": "The memory ledger is blocked until the COW extra allocation is verified."
+  },
+  "events": [
+   {
+    "process": "child",
+    "write_faults": 640
+   },
+   {
+    "process": "parent",
+    "write_faults": 96
+   }
+  ]
+ },
+ "current_state": {
+  "shared_pages_after_fork": 8192,
+  "child_private_pages": 640,
+  "parent_private_pages": 96,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Additional physical bytes allocated by copy-on-write duplication.",
+  "expected_answer": 3014656,
+  "derivation": "child 640 private pages + parent 96 private pages = 736 pages copied; 736 * 4096 = 3014656 bytes."
+ }
+}

@@ -1,0 +1,47 @@
+{
+  "id": "os-c2c-osclassics-paging-01",
+  "goal": "Choose the page replacement policy for the coming reference burst by applying every rule below. Your action reason must state each chosen policy together with the value that determines it, and you must delegate one bounded verification task per value. Every delegated task command must name the exact pending_decision field it verifies (for example: compute the value of fifo_faults) and require the Worker to return one JSON report object carrying that value. Rules: if the value of fifo_faults is at most 6, the plan is: enable FIFO replacement for the burst; otherwise: keep the current LRU replacement; if the value of lru_faults is at most 6, the plan is: confirm LRU as the low-fault policy; otherwise: escalate to the two-handed clock variant. Preserve the frame count and the exact reference order; a page fault happens on every reference to a page not currently resident.",
+  "public_background": {
+    "runtime": {
+      "policy_context": "A process has 3 physical frames. The page reference string for the upcoming burst is known in advance. FIFO replaces the page that has been resident the longest. LRU replaces the page whose most recent reference is the oldest."
+    },
+    "frames": 3,
+    "tasks": [
+      {"id": "page_7"}, {"id": "page_0"}, {"id": "page_1"}, {"id": "page_2"},
+      {"id": "page_3"}, {"id": "page_4"}
+    ],
+    "reference_string": [7, 0, 1, 2, 0, 3, 0, 4],
+    "pending_decisions": [
+      {
+        "field": "fifo_faults",
+        "question": "Starting from empty frames, how many page faults does FIFO incur on the exact reference string [7, 0, 1, 2, 0, 3, 0, 4] with 3 frames?",
+        "controller_note": "The plan branch for enabling FIFO depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "lru_faults",
+        "question": "Starting from empty frames, how many page faults does LRU incur on the same reference string with 3 frames?",
+        "controller_note": "The plan branch for confirming LRU depends on this value; it must be verified before the controller executes the chosen plan."
+      }
+    ],
+    "events": [
+      {"event": "reference_burst_preview", "order": [7, 0, 1, 2, 0, 3, 0, 4]}
+    ]
+  },
+  "current_state": {
+    "resident_pages": [],
+    "free_frames": 3,
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now."
+  },
+  "probe": {
+    "family": "os_classics_paging",
+    "intended_questions": [
+      "FIFO page faults on [7, 0, 1, 2, 0, 3, 0, 4] with 3 frames.",
+      "LRU page faults on the same string with 3 frames."
+    ],
+    "expected_answers": [7, 6],
+    "derivations": [
+      "FIFO: faults on 7, 0, 1, 2 (evict 7), hit 0, fault 3 (evict 0), fault 0 (evict 1), fault 4 (evict 2) = 7 faults.",
+      "LRU: faults on 7, 0, 1, 2 (evict 7), hit 0, fault 3 (evict 1), hit 0, fault 4 (evict 2) = 6 faults."
+    ]
+  }
+}

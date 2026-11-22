@@ -1,0 +1,76 @@
+{
+  "id": "os-c2c-probe3-stage-handoff-02",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 10,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "phase1",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "phase2",
+        "state": "READY",
+        "depends_on": [
+          "phase1"
+        ],
+        "cpu": 3,
+        "gpu": 1,
+        "memory_mb": 4096
+      },
+      {
+        "id": "phase3",
+        "state": "BLOCKED",
+        "depends_on": [
+          "phase2"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_handoff",
+      "question": "When phase1 completes and releases its resources, and phase2 is then admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The stage orchestrator is blocked until this projection is verified."
+    },
+    "events": [
+      {
+        "task": "phase1",
+        "event": "progress",
+        "percent": 94
+      },
+      {
+        "task": "phase2",
+        "event": "admission_ready",
+        "reason": "will be terminal-success once phase1 completes"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 12288,
+    "active_tasks": [
+      "phase1"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after phase1 releases and phase2 is admitted.",
+    "expected_answer": 10240,
+    "derivation": "12288 + 2048 = 14336; 14336 - 4096 = 10240."
+  }
+}

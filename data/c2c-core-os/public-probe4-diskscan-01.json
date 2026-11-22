@@ -1,0 +1,90 @@
+{
+ "id": "os-c2c-probe4-diskscan-01",
+ "goal": "Bring the public I/O scheduler state to a verified next step while preserving elevator policy and the head-movement audit trail.",
+ "public_background": {
+  "runtime": {
+   "cylinders": 200,
+   "head_start": 53,
+   "direction": "up",
+   "algorithm": "SCAN (elevator): serve pending requests while moving in the current direction; reverse only after serving the last request in that direction. No forced travel to either disk end.",
+   "queue_at_t0": [
+    98,
+    183,
+    37,
+    122,
+    14,
+    124,
+    65,
+    67
+   ]
+  },
+  "tasks": [
+   {
+    "id": "queue_snapshot",
+    "state": "SUCCEEDED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 1
+   },
+   {
+    "id": "seek_audit",
+    "state": "READY",
+    "depends_on": [
+     "queue_snapshot"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 2
+   },
+   {
+    "id": "qos_report",
+    "state": "BLOCKED",
+    "depends_on": [
+     "seek_audit"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 3
+   }
+  ],
+  "pending_decision": {
+   "field": "total_head_movement",
+   "question": "The head is at cylinder 53 moving toward higher cylinders; the pending queue is 98, 183, 37, 122, 14, 124, 65, 67. Under SCAN, what is the total head movement in cylinders to serve the whole queue?",
+   "controller_note": "The I/O controller is blocked until the seek total is verified."
+  },
+  "events": [
+   {
+    "head_at_cylinder": 53,
+    "moving": "up"
+   },
+   {
+    "queue_snapshot": [
+     98,
+     183,
+     37,
+     122,
+     14,
+     124,
+     65,
+     67
+    ]
+   }
+  ]
+ },
+ "current_state": {
+  "requests_pending": 8,
+  "head_position": 53,
+  "serviced": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Total SCAN head movement for the pending queue.",
+  "expected_answer": 299,
+  "derivation": "service order [65, 67, 98, 122, 124, 183, 37, 14]; movement = 12+2+31+24+2+59 (up) + 146+23 (down) = 299 cylinders."
+ }
+}

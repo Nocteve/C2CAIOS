@@ -1,0 +1,20 @@
+{
+  "name": "bounded_state_first_delegation_three_arm_v1",
+  "events_path": "artifacts/autonomy-20261005/v5/events.jsonl",
+  "events_sha256": "fd5cf8a23528d211a4bdc017e9d9b051ef77527a9c65fb02ff389f10095211b7",
+  "case_ids": ["job01", "job02", "job03", "job04", "job05", "job06", "job07", "job08"],
+  "selection": "all parents; first actual task_declared regardless of outcome; no-delegation parents reported without fabricating a Worker",
+  "methods": ["text_full", "text_brief", "c2c_shared"],
+  "worker_max_model_calls": 2,
+  "worker_max_new_tokens": 384,
+  "handoff_max_new_tokens": 1024,
+  "source_replay": "Actual autoregressive regeneration from recorded fresh-state request; input, generated and prefix tokens plus original published source cache hash must match. Never force reference output.",
+  "fusion_selection": "Whole actual tokens inside public_background/current_state JSON values and current generated reason/command/deliverable/success_criteria string values. Boundaries remain native. Ambiguous generated character mapping is a retained scope failure.",
+  "selection_limitations": "Includes control records and historical claims; causal effects of previous control are not removed. Fixed provenance rule, no trained selection, dense projection, no zero-copy.",
+  "tools": "Each arm uses only its own actual inspect/check feedback; free Worker output with the same transport compatibility; no global commits or online Planner continuation.",
+  "handoff": "Actual additional 4B generation from a private branch of the same source cache; useful solutions and evidence permitted; incomplete handoff remains a paid preparation failure.",
+  "comparison_scope": "C2C versus native full text is the fixed-snapshot mechanism contrast. Practical handoff adds source task assistance and is a quality/cost competitor, not a pure medium intervention.",
+  "failure_policy": "Keep every parent, preparation failure, truncation, tool exhaustion and semantic error. No prompt search or reruns selected by quality.",
+  "training": false,
+  "system_benchmark": false
+}

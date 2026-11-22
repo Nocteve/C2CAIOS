@@ -1,0 +1,335 @@
+{
+  "source": "artifacts/osclassics-batch-20261019/acbi-osclassics-sched-poolmmap",
+  "caseId": "os-c2c-osclassics-sched-01",
+  "wall": 91.5669485218823,
+  "policy": "priority",
+  "limits": {
+    "memory_mib": 24576,
+    "cpu_quota_pct": 100,
+    "pids_max": 128,
+    "timeout_s": 300
+  },
+  "jobs": [
+    {
+      "id": "J1",
+      "arrival_seconds": 0,
+      "burst_seconds": 4
+    },
+    {
+      "id": "J2",
+      "arrival_seconds": 1,
+      "burst_seconds": 3
+    },
+    {
+      "id": "J3",
+      "arrival_seconds": 2,
+      "burst_seconds": 1
+    },
+    {
+      "id": "J4",
+      "arrival_seconds": 3,
+      "burst_seconds": 2
+    }
+  ],
+  "initialTasks": [
+    {
+      "id": "t1",
+      "command": "compute sjf_total_turnaround_seconds using the public evidence of jobs J1, J2, J3, J4 with arrival_seconds and burst_seconds as given",
+      "deliverable": "sjf_total_turnaround_seconds",
+      "dependsOn": []
+    },
+    {
+      "id": "t2",
+      "command": "compute sjf_total_waiting_seconds using the public evidence of jobs J1, J2, J3, J4 with arrival_seconds and burst_seconds as given",
+      "deliverable": "sjf_total_waiting_seconds",
+      "dependsOn": []
+    }
+  ],
+  "budget": 17963876352,
+  "estimatedBytes": 209715200,
+  "events": [
+    {
+      "event": "submit",
+      "task": "t1"
+    },
+    {
+      "event": "submit",
+      "task": "t2"
+    },
+    {
+      "event": "admit",
+      "task": "t1",
+      "admitted_bytes": 209715200,
+      "budget": 17963876352
+    },
+    {
+      "event": "admit",
+      "task": "t2",
+      "admitted_bytes": 419430400,
+      "budget": 17963876352
+    },
+    {
+      "event": "failed",
+      "task": "t1",
+      "gate": {
+        "accepted": false,
+        "reason": "sjf_total_turnaround_seconds: worker reported 0, public-state simulation says 20",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_turnaround_seconds",
+        "expected": 20,
+        "reported": 0,
+        "contradictory_success_claim": false
+      },
+      "error": null
+    },
+    {
+      "event": "submit",
+      "task": "t1.r1"
+    },
+    {
+      "event": "repair_submit",
+      "task": "t1.r1",
+      "of": "t1"
+    },
+    {
+      "event": "admit",
+      "task": "t1.r1",
+      "admitted_bytes": 419430400,
+      "budget": 17963876352
+    },
+    {
+      "event": "failed",
+      "task": "t2",
+      "gate": {
+        "accepted": false,
+        "reason": "sjf_total_waiting_seconds: worker reported 5, public-state simulation says 10",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_waiting_seconds",
+        "expected": 10,
+        "reported": 5,
+        "contradictory_success_claim": false
+      },
+      "error": null
+    },
+    {
+      "event": "submit",
+      "task": "t2.r1"
+    },
+    {
+      "event": "repair_submit",
+      "task": "t2.r1",
+      "of": "t2"
+    },
+    {
+      "event": "admit",
+      "task": "t2.r1",
+      "admitted_bytes": 419430400,
+      "budget": 17963876352
+    },
+    {
+      "event": "done",
+      "task": "t1.r1",
+      "gate": {
+        "accepted": true,
+        "reason": "sjf_total_turnaround_seconds=20 matches public-state simulation (20)",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_turnaround_seconds",
+        "expected": 20,
+        "reported": 20,
+        "contradictory_success_claim": false
+      },
+      "error": null
+    },
+    {
+      "event": "failed",
+      "task": "t2.r1",
+      "gate": {
+        "accepted": false,
+        "reason": "sjf_total_waiting_seconds: worker reported None, public-state simulation says 10",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_waiting_seconds",
+        "expected": 10,
+        "reported": null,
+        "contradictory_success_claim": false
+      },
+      "error": null
+    }
+  ],
+  "poolEvents": [
+    {
+      "event": "payload_swap_out",
+      "task_id": "t1"
+    },
+    {
+      "event": "payload_page_fault",
+      "task_id": "t1.r1",
+      "swapped_in": "t1.cache.bin",
+      "swap_in_seconds": 0.000028369948267936707
+    },
+    {
+      "event": "payload_swap_out",
+      "task_id": "t2"
+    },
+    {
+      "event": "payload_page_fault",
+      "task_id": "t2.r1",
+      "swapped_in": "t2.cache.bin",
+      "swap_in_seconds": 0.000021584797650575638
+    },
+    {
+      "event": "payload_swap_out",
+      "task_id": "t1.r1"
+    }
+  ],
+  "capacity": 1,
+  "tasks": [
+    {
+      "id": "t1",
+      "pid": 35303,
+      "gate": {
+        "accepted": false,
+        "reason": "sjf_total_turnaround_seconds: worker reported 0, public-state simulation says 20",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_turnaround_seconds",
+        "expected": 20,
+        "reported": 0,
+        "contradictory_success_claim": false
+      },
+      "isolation": {
+        "backend": "plain-subprocess",
+        "rc": 0,
+        "oom_killed": false,
+        "timed_out": false,
+        "wall_s": 9.809476058930159,
+        "unit": null,
+        "memory_peak_mib": 2047.1,
+        "memory_enforcement": "rss_watchdog"
+      },
+      "cacheLoadMs": 26.18779009208083,
+      "pool": {
+        "page_fault": false,
+        "swap_in_seconds": 0,
+        "resident_after": [
+          "t1"
+        ],
+        "capacity": 1,
+        "mmap_publish": true
+      },
+      "state": "REPAIR_PENDING",
+      "repairOf": null,
+      "feedback": null,
+      "outputTokens": 213
+    },
+    {
+      "id": "t2",
+      "pid": 35376,
+      "gate": {
+        "accepted": false,
+        "reason": "sjf_total_waiting_seconds: worker reported 5, public-state simulation says 10",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_waiting_seconds",
+        "expected": 10,
+        "reported": 5,
+        "contradictory_success_claim": false
+      },
+      "isolation": {
+        "backend": "plain-subprocess",
+        "rc": 0,
+        "oom_killed": false,
+        "timed_out": false,
+        "wall_s": 13.778107727412134,
+        "unit": null,
+        "memory_peak_mib": 2071.6,
+        "memory_enforcement": "rss_watchdog"
+      },
+      "cacheLoadMs": 24.66984186321497,
+      "pool": {
+        "page_fault": false,
+        "swap_in_seconds": 0,
+        "resident_after": [
+          "t2"
+        ],
+        "capacity": 1,
+        "mmap_publish": true
+      },
+      "state": "REPAIR_PENDING",
+      "repairOf": null,
+      "feedback": null,
+      "outputTokens": 400
+    },
+    {
+      "id": "t1.r1",
+      "pid": 35454,
+      "gate": {
+        "accepted": true,
+        "reason": "sjf_total_turnaround_seconds=20 matches public-state simulation (20)",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_turnaround_seconds",
+        "expected": 20,
+        "reported": 20,
+        "contradictory_success_claim": false
+      },
+      "isolation": {
+        "backend": "plain-subprocess",
+        "rc": 0,
+        "oom_killed": false,
+        "timed_out": false,
+        "wall_s": 11.709858648944646,
+        "unit": null,
+        "memory_peak_mib": 2038.5,
+        "memory_enforcement": "rss_watchdog"
+      },
+      "cacheLoadMs": 25.04806825891137,
+      "pool": {
+        "page_fault": true,
+        "swap_in_seconds": 0.000028369948267936707,
+        "resident_after": [
+          "t1.r1"
+        ],
+        "capacity": 1,
+        "mmap_publish": true
+      },
+      "state": "DONE",
+      "repairOf": "t1",
+      "feedback": "A previous attempt of this task was rejected (sjf_total_turnaround_seconds: worker reported 0, public-state simulation says 20). Recompute the value from the public evidence and report only the corrected result.",
+      "outputTokens": 308
+    },
+    {
+      "id": "t2.r1",
+      "pid": 35530,
+      "gate": {
+        "accepted": false,
+        "reason": "sjf_total_waiting_seconds: worker reported None, public-state simulation says 10",
+        "public_state_derived": true,
+        "verified_field": "sjf_total_waiting_seconds",
+        "expected": 10,
+        "reported": null,
+        "contradictory_success_claim": false
+      },
+      "isolation": {
+        "backend": "plain-subprocess",
+        "rc": 0,
+        "oom_killed": false,
+        "timed_out": false,
+        "wall_s": 10.922194009646773,
+        "unit": null,
+        "memory_peak_mib": 2030.6,
+        "memory_enforcement": "rss_watchdog"
+      },
+      "cacheLoadMs": 24.903883691877127,
+      "pool": {
+        "page_fault": true,
+        "swap_in_seconds": 0.000021584797650575638,
+        "resident_after": [
+          "t2.r1"
+        ],
+        "capacity": 1,
+        "mmap_publish": true
+      },
+      "state": "FAILED",
+      "repairOf": "t2",
+      "feedback": "A previous attempt of this task was rejected (sjf_total_waiting_seconds: worker reported 5, public-state simulation says 10). Recompute the value from the public evidence and report only the corrected result.",
+      "outputTokens": 275
+    }
+  ]
+}

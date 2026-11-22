@@ -1,0 +1,26 @@
+{
+  "id": "os-c2c-core-multi-01",
+  "goal": "Before the next scheduling change, produce two independent reports: diagnose why rank is blocked, and verify whether summarize is admissible. The reports are read-only and must preserve all dependencies and event evidence.",
+  "public_background": {
+    "runtime": {"cpu_slots": 6, "gpu_slots": 1, "memory_mb": 12288, "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."},
+    "tasks": [
+      {"id": "ingest", "state": "SUCCEEDED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+      {"id": "encode", "state": "RUNNING", "depends_on": ["ingest"], "cpu": 2, "gpu": 0, "memory_mb": 3072},
+      {"id": "rank", "state": "BLOCKED", "depends_on": ["encode"], "cpu": 2, "gpu": 1, "memory_mb": 4096},
+      {"id": "summarize", "state": "READY", "depends_on": ["ingest"], "cpu": 1, "gpu": 0, "memory_mb": 2048},
+      {"id": "publish", "state": "PENDING", "depends_on": ["rank", "summarize"], "cpu": 1, "gpu": 0, "memory_mb": 1024}
+    ],
+    "events": [
+      {"task": "encode", "event": "started", "attempt": 1},
+      {"task": "encode", "event": "heartbeat_late", "elapsed_s": 91, "timeout_s": 120},
+      {"task": "rank", "event": "admission_deferred", "reason": "dependency encode is not terminal-success"},
+      {"task": "summarize", "event": "admission_ready", "reason": "dependency ingest is terminal-success and resources fit"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 2, "free_gpu_slots": 1, "free_memory_mb": 5120,
+    "active_tasks": ["encode"], "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. The Planner must decide the task split; no hidden answer or host-created second command is supplied."
+  }
+}

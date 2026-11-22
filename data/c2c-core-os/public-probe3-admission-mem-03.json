@@ -1,0 +1,89 @@
+{
+  "id": "os-c2c-probe3-admission-mem-03",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 2,
+      "memory_mb": 28672,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "ingest2",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "dedup",
+        "state": "READY",
+        "depends_on": [
+          "ingest2"
+        ],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 5120
+      },
+      {
+        "id": "embed",
+        "state": "READY",
+        "depends_on": [
+          "ingest2"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "compact",
+        "state": "READY",
+        "depends_on": [
+          "ingest2"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_ready",
+      "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The capacity planner is blocked until this value is verified."
+    },
+    "events": [
+      {
+        "task": "dedup",
+        "event": "admission_ready",
+        "reason": "dependency ingest2 is terminal-success"
+      },
+      {
+        "task": "embed",
+        "event": "admission_ready",
+        "reason": "dependency ingest2 is terminal-success"
+      },
+      {
+        "task": "compact",
+        "event": "admission_ready",
+        "reason": "dependency ingest2 is terminal-success"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 28672,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after admitting every READY task.",
+    "expected_answer": 17408,
+    "derivation": "READY: dedup 5120 + embed 4096 + compact 2048 = 11264; 28672 - 11264 = 17408."
+  }
+}

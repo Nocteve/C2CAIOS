@@ -1,0 +1,76 @@
+{
+  "id": "os-c2c-probe3c-release-admit-01",
+  "goal": "Choose the next scheduling plan by this rule: if remaining_memory_after_release stays at or above 8192 MB, the plan is: admit the waiting successor now; otherwise: defer the waiting successor. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 12,
+      "gpu_slots": 2,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "etl",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 6144
+      },
+      {
+        "id": "train",
+        "state": "READY",
+        "depends_on": [
+          "etl"
+        ],
+        "cpu": 2,
+        "gpu": 1,
+        "memory_mb": 3072
+      },
+      {
+        "id": "export",
+        "state": "BLOCKED",
+        "depends_on": [
+          "train"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_release",
+      "question": "When etl finishes and releases its resources, and train is then admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The plan branch for remaining_memory_after_release depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "etl",
+        "event": "progress",
+        "percent": 96
+      },
+      {
+        "task": "train",
+        "event": "admission_ready",
+        "reason": "will be terminal-success once etl completes"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 26624,
+    "active_tasks": [
+      "etl"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after etl releases and train is admitted.",
+    "expected_answer": 29696,
+    "derivation": "26624 + 6144 = 32768; 32768 - 3072 = 29696."
+  }
+}

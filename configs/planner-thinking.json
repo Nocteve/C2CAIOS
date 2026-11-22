@@ -1,0 +1,9 @@
+{
+  "mode": "native_qwen_thinking_tool_call",
+  "max_new_tokens": 4096,
+  "sampling": {"temperature": 0.6, "top_p": 0.95, "top_k": 20},
+  "source": "https://huggingface.co/Qwen/Qwen3-4B",
+  "budget_scope": "Thinking and action share this limit and the existing total parent token budget; no fabricated thinking closure or extra retry",
+  "comparison_scope": "One explicit inference-policy intervention: thinking template, appropriate sampling and larger per-call ceiling, not a thinking-only causal ablation",
+  "weights_updated": false
+}

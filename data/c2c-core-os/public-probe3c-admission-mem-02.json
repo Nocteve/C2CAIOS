@@ -1,0 +1,89 @@
+{
+  "id": "os-c2c-probe3c-admission-mem-02",
+  "goal": "Choose the next scheduling plan by this rule: if remaining_memory_after_ready stays at or above 8192 MB, the plan is: admit every READY task; otherwise: defer the smallest READY task. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 2,
+      "memory_mb": 24576,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "prep",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "scan",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "index",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "seal",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_ready",
+      "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The plan branch for remaining_memory_after_ready depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "scan",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      },
+      {
+        "task": "index",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      },
+      {
+        "task": "seal",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 24576,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after admitting every READY task.",
+    "expected_answer": 15360,
+    "derivation": "READY: scan 4096 + index 3072 + seal 2048 = 9216; 24576 - 9216 = 15360."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "events_path": "artifacts/native-tools-20261006/v2/events.jsonl",
+  "events_sha256": "8a329bbe5df20664f384a2cf1713fd9124bf20164ab16030953a5a49e4dadab8",
+  "selection": "All actual task_declared records from the frozen source; two assignments from one parent, not independent samples",
+  "arms": [
+    {"name":"inherited_full","worker_interface":"native_tools","communication":"text_full","worker_context_mode":"planner_transcript"},
+    {"name":"independent_full","worker_interface":"native_tools","communication":"text_full","worker_context_mode":"independent_session"},
+    {"name":"independent_brief","worker_interface":"native_tools","communication":"text_brief","worker_context_mode":"independent_session"}
+  ],
+  "limits_overrides": {"handoff_max_new_tokens":768},
+  "scope": "One structural receiver-boundary diagnosis; exact historical source token replay; not original historical GPU KV or autonomous collaboration",
+  "stop_policy": "One complete pass, unchanged tasks/weights/Worker budget, all failures retained; no prompt/sampling/budget retries; leave server running"
+}

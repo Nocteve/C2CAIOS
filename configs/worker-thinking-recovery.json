@@ -1,0 +1,19 @@
+{
+  "events_path": "artifacts/native-tools-20261006/v2/events.jsonl",
+  "events_sha256": "8a329bbe5df20664f384a2cf1713fd9124bf20164ab16030953a5a49e4dadab8",
+  "selection": "All actual task_declared records, same as frozen communication recovery",
+  "arms": [
+    {"name":"text_full","worker_interface":"native_tools","communication":"text_full"},
+    {"name":"text_brief","worker_interface":"native_tools","communication":"text_brief"},
+    {"name":"c2c_shared","worker_interface":"native_tools","communication":"c2c_shared"}
+  ],
+  "limits_overrides": {
+    "handoff_max_new_tokens":768,
+    "worker_native_thinking":true,
+    "worker_sampling":{"temperature":0.6,"top_p":0.95,"top_k":20},
+    "worker_sample_seed":42,
+    "worker_max_new_tokens":1536
+  },
+  "scope": "Joint thinking/sampling/output-budget intervention, not a pure C2C improvement. Seed 42+call_index independently for every arm/task. Entire thinking and final action count toward budget; truncate as failure.",
+  "stop_policy": "Exactly one complete pass; no prompt variants or seed search; preserve all failures and keep server running"
+}

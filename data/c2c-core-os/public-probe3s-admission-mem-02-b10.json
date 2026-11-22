@@ -1,0 +1,2161 @@
+{
+  "id": "os-c2c-probe3-admission-mem-02",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 2,
+      "memory_mb": 24576,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "prep",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "scan",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "index",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "seal",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_ready",
+      "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The capacity planner is blocked until this value is verified."
+    },
+    "events": [
+      {
+        "task": "scan",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      },
+      {
+        "task": "index",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      },
+      {
+        "task": "seal",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      }
+    ],
+    "archived_tasks": [
+      {
+        "id": "hist_1000",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 555
+      },
+      {
+        "id": "hist_1001",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 560
+      },
+      {
+        "id": "hist_1002",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 214
+      },
+      {
+        "id": "hist_1003",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 267
+      },
+      {
+        "id": "hist_1004",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 469
+      },
+      {
+        "id": "hist_1005",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 169
+      },
+      {
+        "id": "hist_1006",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 421
+      },
+      {
+        "id": "hist_1007",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 510
+      },
+      {
+        "id": "hist_1008",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 326
+      },
+      {
+        "id": "hist_1009",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 36
+      },
+      {
+        "id": "hist_1010",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 174
+      },
+      {
+        "id": "hist_1011",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 491
+      },
+      {
+        "id": "hist_1012",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 173
+      },
+      {
+        "id": "hist_1013",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 518
+      },
+      {
+        "id": "hist_1014",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 459
+      },
+      {
+        "id": "hist_1015",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 419
+      },
+      {
+        "id": "hist_1016",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 29
+      },
+      {
+        "id": "hist_1017",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 364
+      },
+      {
+        "id": "hist_1018",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 498
+      },
+      {
+        "id": "hist_1019",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 202
+      },
+      {
+        "id": "hist_1020",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 331
+      },
+      {
+        "id": "hist_1021",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 578
+      },
+      {
+        "id": "hist_1022",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 501
+      },
+      {
+        "id": "hist_1023",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 96
+      },
+      {
+        "id": "hist_1024",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 303
+      },
+      {
+        "id": "hist_1025",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 100
+      },
+      {
+        "id": "hist_1026",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 195
+      },
+      {
+        "id": "hist_1027",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 50
+      },
+      {
+        "id": "hist_1028",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 336
+      },
+      {
+        "id": "hist_1029",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 407
+      },
+      {
+        "id": "hist_1030",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 219
+      },
+      {
+        "id": "hist_1031",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 134
+      },
+      {
+        "id": "hist_1032",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 85
+      },
+      {
+        "id": "hist_1033",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 427
+      },
+      {
+        "id": "hist_1034",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 273
+      },
+      {
+        "id": "hist_1035",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 547
+      },
+      {
+        "id": "hist_1036",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 594
+      },
+      {
+        "id": "hist_1037",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 433
+      },
+      {
+        "id": "hist_1038",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 363
+      },
+      {
+        "id": "hist_1039",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 457
+      },
+      {
+        "id": "hist_1040",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 30
+      },
+      {
+        "id": "hist_1041",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 531
+      },
+      {
+        "id": "hist_1042",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 566
+      },
+      {
+        "id": "hist_1043",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 469
+      },
+      {
+        "id": "hist_1044",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 541
+      },
+      {
+        "id": "hist_1045",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 210
+      },
+      {
+        "id": "hist_1046",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 193
+      },
+      {
+        "id": "hist_1047",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 107
+      },
+      {
+        "id": "hist_1048",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 551
+      },
+      {
+        "id": "hist_1049",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 364
+      },
+      {
+        "id": "hist_1050",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 175
+      },
+      {
+        "id": "hist_1051",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 481
+      },
+      {
+        "id": "hist_1052",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 555
+      },
+      {
+        "id": "hist_1053",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 499
+      },
+      {
+        "id": "hist_1054",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 492
+      },
+      {
+        "id": "hist_1055",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 96
+      },
+      {
+        "id": "hist_1056",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 178
+      },
+      {
+        "id": "hist_1057",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 161
+      },
+      {
+        "id": "hist_1058",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 259
+      },
+      {
+        "id": "hist_1059",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 373
+      },
+      {
+        "id": "hist_1060",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 105
+      },
+      {
+        "id": "hist_1061",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 466
+      },
+      {
+        "id": "hist_1062",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 201
+      },
+      {
+        "id": "hist_1063",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 364
+      },
+      {
+        "id": "hist_1064",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 108
+      },
+      {
+        "id": "hist_1065",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 570
+      },
+      {
+        "id": "hist_1066",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 100
+      },
+      {
+        "id": "hist_1067",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 281
+      },
+      {
+        "id": "hist_1068",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 147
+      },
+      {
+        "id": "hist_1069",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 595
+      },
+      {
+        "id": "hist_1070",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 107
+      },
+      {
+        "id": "hist_1071",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 82
+      },
+      {
+        "id": "hist_1072",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 374
+      },
+      {
+        "id": "hist_1073",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 440
+      },
+      {
+        "id": "hist_1074",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 182
+      },
+      {
+        "id": "hist_1075",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 250
+      },
+      {
+        "id": "hist_1076",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 403
+      },
+      {
+        "id": "hist_1077",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 541
+      },
+      {
+        "id": "hist_1078",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 30
+      },
+      {
+        "id": "hist_1079",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 320
+      },
+      {
+        "id": "hist_1080",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 89
+      },
+      {
+        "id": "hist_1081",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 407
+      },
+      {
+        "id": "hist_1082",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 234
+      },
+      {
+        "id": "hist_1083",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 289
+      },
+      {
+        "id": "hist_1084",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 574
+      },
+      {
+        "id": "hist_1085",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 463
+      },
+      {
+        "id": "hist_1086",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 596
+      },
+      {
+        "id": "hist_1087",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 552
+      },
+      {
+        "id": "hist_1088",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 353
+      },
+      {
+        "id": "hist_1089",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 372
+      },
+      {
+        "id": "hist_1090",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 427
+      },
+      {
+        "id": "hist_1091",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 327
+      },
+      {
+        "id": "hist_1092",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 417
+      },
+      {
+        "id": "hist_1093",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 321
+      },
+      {
+        "id": "hist_1094",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 542
+      },
+      {
+        "id": "hist_1095",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 205
+      },
+      {
+        "id": "hist_1096",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 120
+      },
+      {
+        "id": "hist_1097",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 48
+      },
+      {
+        "id": "hist_1098",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 401
+      },
+      {
+        "id": "hist_1099",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 34
+      },
+      {
+        "id": "hist_1100",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 51
+      },
+      {
+        "id": "hist_1101",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 497
+      },
+      {
+        "id": "hist_1102",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 521
+      },
+      {
+        "id": "hist_1103",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 460
+      },
+      {
+        "id": "hist_1104",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 178
+      },
+      {
+        "id": "hist_1105",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 480
+      },
+      {
+        "id": "hist_1106",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 242
+      },
+      {
+        "id": "hist_1107",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 82
+      },
+      {
+        "id": "hist_1108",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 72
+      },
+      {
+        "id": "hist_1109",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 130
+      },
+      {
+        "id": "hist_1110",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 123
+      },
+      {
+        "id": "hist_1111",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 93
+      },
+      {
+        "id": "hist_1112",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 471
+      },
+      {
+        "id": "hist_1113",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 381
+      },
+      {
+        "id": "hist_1114",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 302
+      },
+      {
+        "id": "hist_1115",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 39
+      },
+      {
+        "id": "hist_1116",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 44
+      },
+      {
+        "id": "hist_1117",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 178
+      },
+      {
+        "id": "hist_1118",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 104
+      },
+      {
+        "id": "hist_1119",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 422
+      },
+      {
+        "id": "hist_1120",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 326
+      },
+      {
+        "id": "hist_1121",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 367
+      },
+      {
+        "id": "hist_1122",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 336
+      },
+      {
+        "id": "hist_1123",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 107
+      },
+      {
+        "id": "hist_1124",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 20
+      },
+      {
+        "id": "hist_1125",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 546
+      },
+      {
+        "id": "hist_1126",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 478
+      },
+      {
+        "id": "hist_1127",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 183
+      },
+      {
+        "id": "hist_1128",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 541
+      },
+      {
+        "id": "hist_1129",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 68
+      },
+      {
+        "id": "hist_1130",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 72
+      },
+      {
+        "id": "hist_1131",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 378
+      },
+      {
+        "id": "hist_1132",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 197
+      },
+      {
+        "id": "hist_1133",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 234
+      },
+      {
+        "id": "hist_1134",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 560
+      },
+      {
+        "id": "hist_1135",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 223
+      },
+      {
+        "id": "hist_1136",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 248
+      },
+      {
+        "id": "hist_1137",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 396
+      },
+      {
+        "id": "hist_1138",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 233
+      },
+      {
+        "id": "hist_1139",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 149
+      },
+      {
+        "id": "hist_1140",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 211
+      },
+      {
+        "id": "hist_1141",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 161
+      },
+      {
+        "id": "hist_1142",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 292
+      },
+      {
+        "id": "hist_1143",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 199
+      },
+      {
+        "id": "hist_1144",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 381
+      },
+      {
+        "id": "hist_1145",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 118
+      },
+      {
+        "id": "hist_1146",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 95
+      },
+      {
+        "id": "hist_1147",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 561
+      },
+      {
+        "id": "hist_1148",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 47
+      },
+      {
+        "id": "hist_1149",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 46
+      },
+      {
+        "id": "hist_1150",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 38
+      },
+      {
+        "id": "hist_1151",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 443
+      },
+      {
+        "id": "hist_1152",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 105
+      },
+      {
+        "id": "hist_1153",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 556
+      },
+      {
+        "id": "hist_1154",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 463
+      },
+      {
+        "id": "hist_1155",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 151
+      },
+      {
+        "id": "hist_1156",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 328
+      },
+      {
+        "id": "hist_1157",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 476
+      },
+      {
+        "id": "hist_1158",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 87
+      },
+      {
+        "id": "hist_1159",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 407
+      },
+      {
+        "id": "hist_1160",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 358
+      },
+      {
+        "id": "hist_1161",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 592
+      },
+      {
+        "id": "hist_1162",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 313
+      },
+      {
+        "id": "hist_1163",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 322
+      },
+      {
+        "id": "hist_1164",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 525
+      },
+      {
+        "id": "hist_1165",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 441
+      },
+      {
+        "id": "hist_1166",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 339
+      },
+      {
+        "id": "hist_1167",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 145
+      },
+      {
+        "id": "hist_1168",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 48
+      },
+      {
+        "id": "hist_1169",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 354
+      },
+      {
+        "id": "hist_1170",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 51
+      },
+      {
+        "id": "hist_1171",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 151
+      },
+      {
+        "id": "hist_1172",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 37
+      },
+      {
+        "id": "hist_1173",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 434
+      },
+      {
+        "id": "hist_1174",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 24
+      },
+      {
+        "id": "hist_1175",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 419
+      },
+      {
+        "id": "hist_1176",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 400
+      },
+      {
+        "id": "hist_1177",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 493
+      },
+      {
+        "id": "hist_1178",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 380
+      },
+      {
+        "id": "hist_1179",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 339
+      },
+      {
+        "id": "hist_1180",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 140
+      },
+      {
+        "id": "hist_1181",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 514
+      },
+      {
+        "id": "hist_1182",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 332
+      },
+      {
+        "id": "hist_1183",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 184
+      },
+      {
+        "id": "hist_1184",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 326
+      },
+      {
+        "id": "hist_1185",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 419
+      },
+      {
+        "id": "hist_1186",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 394
+      },
+      {
+        "id": "hist_1187",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 134
+      },
+      {
+        "id": "hist_1188",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 137
+      },
+      {
+        "id": "hist_1189",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 133
+      },
+      {
+        "id": "hist_1190",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 379
+      },
+      {
+        "id": "hist_1191",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 175
+      },
+      {
+        "id": "hist_1192",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 380
+      },
+      {
+        "id": "hist_1193",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 565
+      },
+      {
+        "id": "hist_1194",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 123
+      },
+      {
+        "id": "hist_1195",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 600
+      },
+      {
+        "id": "hist_1196",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 56
+      },
+      {
+        "id": "hist_1197",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 296
+      },
+      {
+        "id": "hist_1198",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 406
+      },
+      {
+        "id": "hist_1199",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 149
+      },
+      {
+        "id": "hist_1200",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 373
+      },
+      {
+        "id": "hist_1201",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 99
+      },
+      {
+        "id": "hist_1202",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 160
+      },
+      {
+        "id": "hist_1203",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 525
+      },
+      {
+        "id": "hist_1204",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 270
+      },
+      {
+        "id": "hist_1205",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 97
+      },
+      {
+        "id": "hist_1206",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 600
+      },
+      {
+        "id": "hist_1207",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 203
+      },
+      {
+        "id": "hist_1208",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 475
+      },
+      {
+        "id": "hist_1209",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 187
+      },
+      {
+        "id": "hist_1210",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 162
+      },
+      {
+        "id": "hist_1211",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 259
+      },
+      {
+        "id": "hist_1212",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 365
+      },
+      {
+        "id": "hist_1213",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 227
+      },
+      {
+        "id": "hist_1214",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 127
+      },
+      {
+        "id": "hist_1215",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 151
+      },
+      {
+        "id": "hist_1216",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 188
+      },
+      {
+        "id": "hist_1217",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 228
+      },
+      {
+        "id": "hist_1218",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 301
+      },
+      {
+        "id": "hist_1219",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 553
+      },
+      {
+        "id": "hist_1220",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 48
+      },
+      {
+        "id": "hist_1221",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 382
+      },
+      {
+        "id": "hist_1222",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 58
+      },
+      {
+        "id": "hist_1223",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 266
+      },
+      {
+        "id": "hist_1224",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 372
+      },
+      {
+        "id": "hist_1225",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 332
+      },
+      {
+        "id": "hist_1226",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 406
+      },
+      {
+        "id": "hist_1227",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 295
+      },
+      {
+        "id": "hist_1228",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 39
+      },
+      {
+        "id": "hist_1229",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 387
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 24576,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran. archived_tasks are historical records only: they are already terminal or routine maintenance and are NOT part of the pending decision; do not include them in any calculation for it."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after admitting every READY task.",
+    "expected_answer": 15360,
+    "derivation": "READY: scan 4096 + index 3072 + seal 2048 = 9216; 24576 - 9216 = 15360."
+  }
+}

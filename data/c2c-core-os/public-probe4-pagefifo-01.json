@@ -1,0 +1,154 @@
+{
+ "id": "os-c2c-probe4-pagefifo-01",
+ "goal": "Bring the public page-fault ledger to a verified next step while preserving FIFO replacement invariants and the frame audit trail.",
+ "public_background": {
+  "runtime": {
+   "frames": 3,
+   "replacement": "FIFO: on a fault with full frames, evict the oldest loaded page",
+   "reference_string": [
+    7,
+    0,
+    1,
+    2,
+    0,
+    3,
+    0,
+    4,
+    2,
+    3,
+    0,
+    3,
+    2,
+    1,
+    2,
+    0,
+    1,
+    7,
+    0,
+    1
+   ],
+   "page_size_bytes": 4096
+  },
+  "tasks": [
+   {
+    "id": "fault_replay",
+    "state": "READY",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 3
+   },
+   {
+    "id": "thrash_report",
+    "state": "BLOCKED",
+    "depends_on": [
+     "fault_replay"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 2
+   }
+  ],
+  "pending_decision": {
+   "field": "fifo_page_faults",
+   "question": "With 3 frames and FIFO replacement, how many page faults occur for the reference string 7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1?",
+   "controller_note": "The memory manager is blocked until the fault count is verified."
+  },
+  "events": [
+   {
+    "time_step": 0,
+    "page": 7
+   },
+   {
+    "time_step": 1,
+    "page": 0
+   },
+   {
+    "time_step": 2,
+    "page": 1
+   },
+   {
+    "time_step": 3,
+    "page": 2
+   },
+   {
+    "time_step": 4,
+    "page": 0
+   },
+   {
+    "time_step": 5,
+    "page": 3
+   },
+   {
+    "time_step": 6,
+    "page": 0
+   },
+   {
+    "time_step": 7,
+    "page": 4
+   },
+   {
+    "time_step": 8,
+    "page": 2
+   },
+   {
+    "time_step": 9,
+    "page": 3
+   },
+   {
+    "time_step": 10,
+    "page": 0
+   },
+   {
+    "time_step": 11,
+    "page": 3
+   },
+   {
+    "time_step": 12,
+    "page": 2
+   },
+   {
+    "time_step": 13,
+    "page": 1
+   },
+   {
+    "time_step": 14,
+    "page": 2
+   },
+   {
+    "time_step": 15,
+    "page": 0
+   },
+   {
+    "time_step": 16,
+    "page": 1
+   },
+   {
+    "time_step": 17,
+    "page": 7
+   },
+   {
+    "time_step": 18,
+    "page": 0
+   },
+   {
+    "time_step": 19,
+    "page": 1
+   }
+  ]
+ },
+ "current_state": {
+  "frames_content": [],
+  "faults_so_far": 0,
+  "hits_so_far": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "FIFO page fault count for the 20-step reference string with 3 frames.",
+  "expected_answer": 15,
+  "derivation": "Faults at steps 0,1,2,3 (pages 7,0,1,2) = 4; then 3,0,4,2,3,0 at steps 5,6,7,8,9,10 = 6 more (10); then 1,2 at steps 13,14 = 2 more (12); then 7,0,1 at steps 17,18,19 = 3 more (15). Hits at steps 4,11,12,15,16 (5 hits). Total page faults = 15."
+ }
+}

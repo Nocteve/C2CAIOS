@@ -1,0 +1,67 @@
+{
+  "id": "os-c2c-probe3-timeout-buffer-02",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 6,
+      "gpu_slots": 1,
+      "memory_mb": 12288,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "renderx",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 1,
+        "memory_mb": 3072
+      },
+      {
+        "id": "mixdown",
+        "state": "BLOCKED",
+        "depends_on": [
+          "renderx"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "effective_timeout_margin_seconds",
+      "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before renderx hits its timeout (remaining time minus the reserved retry buffer)?",
+      "controller_note": "The watchdog is blocked until this margin is verified."
+    },
+    "events": [
+      {
+        "task": "renderx",
+        "event": "heartbeat",
+        "elapsed_s": 65,
+        "timeout_s": 110
+      },
+      {
+        "policy": "retry",
+        "event": "reserved_buffer",
+        "buffer_s": 20
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 4,
+    "free_gpu_slots": 0,
+    "free_memory_mb": 9216,
+    "active_tasks": [
+      "renderx"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Effective timeout margin for renderx (remaining time minus retry buffer).",
+    "expected_answer": 25,
+    "derivation": "110 - 65 - 20 = 25."
+  }
+}

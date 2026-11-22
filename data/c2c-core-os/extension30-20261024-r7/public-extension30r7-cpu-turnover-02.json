@@ -1,0 +1,208 @@
+{
+  "id": "os-c2c-extension30r7-cpu-turnover-02",
+  "goal": "Choose the next scheduling plan by this rule: if free_cpu_after_turnover stays at or above 4 slots, the plan is: admit the waiting job now; otherwise: defer the waiting job. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 24,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 6,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "hog",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 9,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "repack",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 13,
+        "gpu": 0,
+        "memory_mb": 4096
+      }
+    ],
+    "pending_decision": {
+      "field": "free_cpu_after_turnover",
+      "question": "After evicting the hog task and admitting the repack job, what will the remaining free_cpu_slots be?",
+      "controller_note": "The plan branch for free_cpu_after_turnover depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "hog",
+        "event": "health_check_failed",
+        "consecutive_failures": 5
+      },
+      {
+        "task": "repack",
+        "event": "admission_ready"
+      }
+    ],
+    "parallel_question_copies": [
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 48,
+            "gpu_slots": 2,
+            "memory_mb": 32768,
+            "max_parallel_tasks": 6,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "hog",
+              "state": "RUNNING",
+              "depends_on": [],
+              "cpu": 18,
+              "gpu": 0,
+              "memory_mb": 4096
+            },
+            {
+              "id": "repack",
+              "state": "READY",
+              "depends_on": [],
+              "cpu": 26,
+              "gpu": 0,
+              "memory_mb": 8192
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_b_value",
+            "question": "After evicting the hog task and admitting the repack job, what will the remaining free_cpu_slots be?",
+            "controller_note": "The plan branch for replica_b_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "task": "hog",
+              "event": "health_check_failed",
+              "consecutive_failures": 5
+            },
+            {
+              "task": "repack",
+              "event": "admission_ready"
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 30,
+          "free_gpu_slots": 2,
+          "free_memory_mb": 28672,
+          "active_tasks": [
+            "hog"
+          ],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      },
+      {
+        "group": "C",
+        "target_field": "replica_c_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 72,
+            "gpu_slots": 3,
+            "memory_mb": 49152,
+            "max_parallel_tasks": 6,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "hog",
+              "state": "RUNNING",
+              "depends_on": [],
+              "cpu": 27,
+              "gpu": 0,
+              "memory_mb": 6144
+            },
+            {
+              "id": "repack",
+              "state": "READY",
+              "depends_on": [],
+              "cpu": 39,
+              "gpu": 0,
+              "memory_mb": 12288
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_c_value",
+            "question": "After evicting the hog task and admitting the repack job, what will the remaining free_cpu_slots be?",
+            "controller_note": "The plan branch for replica_c_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "task": "hog",
+              "event": "health_check_failed",
+              "consecutive_failures": 5
+            },
+            {
+              "task": "repack",
+              "event": "admission_ready"
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 45,
+          "free_gpu_slots": 3,
+          "free_memory_mb": 43008,
+          "active_tasks": [
+            "hog"
+          ],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      }
+    ],
+    "verification_requests": [
+      {
+        "group": "A",
+        "target_field": "free_cpu_after_turnover",
+        "case_ref": "Original root public_background/current_state",
+        "question": "After evicting the hog task and admitting the repack job, what will the remaining free_cpu_slots be?",
+        "report_key": "free_cpu_after_turnover"
+      },
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "case_ref": "parallel_question_copies[group=B]",
+        "question": "After evicting the hog task and admitting the repack job, what will the remaining free_cpu_slots be?",
+        "report_key": "replica_b_value"
+      },
+      {
+        "group": "C",
+        "target_field": "replica_c_value",
+        "case_ref": "parallel_question_copies[group=C]",
+        "question": "After evicting the hog task and admitting the repack job, what will the remaining free_cpu_slots be?",
+        "report_key": "replica_c_value"
+      }
+    ],
+    "communication_test_harness": {
+      "requested_complete_question_groups": 3,
+      "scope": "Communication-test load: solve the same complete question for independent number groups A/B/C. No intermediate-value checks and no cross-group arithmetic.",
+      "group_policy": "A is the original question and original numbers. Each additional group has its own complete public state. Same task IDs in different groups do not share state.",
+      "assignment_contract": "A full load has one distinct Worker report per group. For each actual assignment name its exact target_field in command and deliverable, quote the operands from THAT group, and ask for the complete answer under report_key as a JSON numeric literal. Never mix groups or substitute an intermediate value.",
+      "measurement": "Record requested and actual coverage separately; original group A is scored independently. Other groups cannot supply a missing A report even if their answers coincide.",
+      "system_boundary": "This is a test condition, not the system design. Planner actions remain real generated decisions; self-execution, zero delegation and takeover are legal. Do not host-fill tasks."
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 15,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 14336,
+    "active_tasks": [
+      "hog"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "parallel_question_development",
+    "primary_field": "free_cpu_after_turnover"
+  }
+}

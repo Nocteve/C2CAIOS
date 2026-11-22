@@ -1,0 +1,12 @@
+{
+  "policy": "bounded_actual_analysis_then_action_v1",
+  "max_new_tokens": 320,
+  "analysis_decode": "free greedy, no output mask; short planning note, not forced long reasoning",
+  "action_decode": "existing action grammar on a private continuation of actual analysis KV",
+  "total_parent_budget": "unchanged; analysis consumes the existing total generated-token budget",
+  "incomplete_analysis": "record real output and fail; no fabricated EOS or silent fallback",
+  "publication": "actual input plus generated analysis plus actual dispatch; no generated text reencoding",
+  "c2c_selection": "existing public/current-state and dispatch spans plus actual analysis content token positions",
+  "evaluation": "all eight existing engineering parents once; unchanged Worker and tasks; no training or forced delegation",
+  "claims": "hypothesis about planning policy, not proven absence of reasoning in direct JSON; not a C2C speed trial"
+}

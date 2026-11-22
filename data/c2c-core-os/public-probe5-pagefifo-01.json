@@ -1,0 +1,79 @@
+{
+ "id": "os-c2c-probe5-pagefifo-01",
+ "goal": "Bring the public page-fault ledger to a verified next step while preserving FIFO replacement invariants and the frame audit trail.",
+ "public_background": {
+  "runtime": {
+   "frames": 2,
+   "replacement": "FIFO: on a fault with full frames, evict the oldest loaded page",
+   "reference_string": [
+    1,
+    2,
+    3,
+    1,
+    2
+   ],
+   "page_size_bytes": 4096
+  },
+  "tasks": [
+   {
+    "id": "fault_replay",
+    "state": "READY",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 2
+   },
+   {
+    "id": "thrash_report",
+    "state": "BLOCKED",
+    "depends_on": [
+     "fault_replay"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 2
+   }
+  ],
+  "pending_decision": {
+   "field": "fifo_page_faults",
+   "question": "With 2 frames and FIFO replacement, how many page faults occur for the reference string 1,2,3,1,2?",
+   "controller_note": "The memory manager is blocked until the fault count is verified."
+  },
+  "events": [
+   {
+    "time_step": 0,
+    "page": 1
+   },
+   {
+    "time_step": 1,
+    "page": 2
+   },
+   {
+    "time_step": 2,
+    "page": 3
+   },
+   {
+    "time_step": 3,
+    "page": 1
+   },
+   {
+    "time_step": 4,
+    "page": 2
+   }
+  ]
+ },
+ "current_state": {
+  "frames_content": [],
+  "faults_so_far": 0,
+  "hits_so_far": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "FIFO page fault count for the 5-step reference string with 2 frames.",
+  "expected_answer": 5,
+  "derivation": "1: fault (evict None); 2: fault (evict None); 3: fault (evict 1); 1: fault (evict 2); 2: fault (evict 3); all 5 references fault (2 frames cannot hold the working set), total = 5."
+ }
+}

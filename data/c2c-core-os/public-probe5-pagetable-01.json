@@ -1,0 +1,62 @@
+{
+ "id": "os-c2c-probe5-pagetable-01",
+ "goal": "Bring the public address-translation state to a verified next step while preserving paging invariants and the fault audit trail.",
+ "public_background": {
+  "runtime": {
+   "page_size_bytes": 4096,
+   "translation_rule": "physical_address = frame_number * page_size + offset; the virtual address 34083 lies in frame 8 at offset 1315 (8*4096=32768, 34083-32768=1315).",
+   "pme": {
+    "virtual_address": 34083,
+    "frame_number": 8,
+    "offset": 1315,
+    "present": true
+   }
+  },
+  "tasks": [
+   {
+    "id": "walk",
+    "state": "READY",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 1
+   },
+   {
+    "id": "tlb_fill",
+    "state": "BLOCKED",
+    "depends_on": [
+     "walk"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 1
+   }
+  ],
+  "pending_decision": {
+   "field": "physical_address_bytes",
+   "question": "A present page map entry maps virtual frame 8 to physical frame 8 with page size 4096 B. For virtual address 34083 (offset 1315 within its page), what is the physical address in bytes?",
+   "controller_note": "The memory manager is blocked until the translation is verified."
+  },
+  "events": [
+   {
+    "fault_address": 34083,
+    "access": "read",
+    "frame": 8,
+    "offset": 1315
+   }
+  ]
+ },
+ "current_state": {
+  "page_faults": 1,
+  "walks_completed": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Physical address for virtual address 34083.",
+  "expected_answer": 34083,
+  "derivation": "frame 8 * 4096 = 32768; 32768 + offset 1315 = 34083."
+ }
+}

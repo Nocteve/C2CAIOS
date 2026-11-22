@@ -1,0 +1,13 @@
+{
+  "name": "cloud_qwen_4_to_06",
+  "receiver": "Qwen/Qwen3-0.6B",
+  "sender": "Qwen/Qwen3-4B",
+  "fuser_repo": "nics-efc/C2C_Fuser",
+  "fuser_subdir": "qwen3_0.6b+qwen3_4b_Fuser",
+  "dtype": "bfloat16",
+  "attention_backend": "sdpa",
+  "max_input_tokens": 32768,
+  "max_new_tokens": 128,
+  "seed": 42,
+  "c2c_revision": "3ca0e98020bac1f36000623afcb8dfc6f8c29bdf"
+}

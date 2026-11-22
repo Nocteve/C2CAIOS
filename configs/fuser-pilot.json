@@ -1,0 +1,361 @@
+{
+  "scope": "one training pass then fixed held-out handoff replay; no autonomous-system or statistical generalization claim",
+  "public_files": [
+    "data/handoff-candidates-v1/public.json",
+    "data/handoff-candidates-v2/public.json"
+  ],
+  "training_targets_file": "data/handoff-candidates-v2/training-targets.json",
+  "records": [
+    {
+      "id": "1901.04899",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1901.04899"
+      ],
+      "family_ids": [
+        "qasper-paper:1901.04899"
+      ],
+      "source_sha256": [
+        "c6d9c9f5352dc8f16ce1c162d5616f6734686167f7e5fc146fc3687624f3a706"
+      ]
+    },
+    {
+      "id": "2004.04315",
+      "split": "train",
+      "parent_ids": [
+        "qasper:2004.04315"
+      ],
+      "family_ids": [
+        "qasper-paper:2004.04315"
+      ],
+      "source_sha256": [
+        "e9e58c5a03eac4fe7c2a7c9feedad5bafb068a1fc1a940f37e9e8036702b8241"
+      ]
+    },
+    {
+      "id": "1909.11189",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1909.11189"
+      ],
+      "family_ids": [
+        "qasper-paper:1909.11189"
+      ],
+      "source_sha256": [
+        "4a64bb33093cb90bc3abd6c285d1d21401c36c2364e94dbe072ba091d8921797"
+      ]
+    },
+    {
+      "id": "1907.12108",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1907.12108"
+      ],
+      "family_ids": [
+        "qasper-paper:1907.12108"
+      ],
+      "source_sha256": [
+        "c7a0053ddc6a62bfd3e06ca2fec39e7647bc5cec2353338a5e4ad01c855661fb"
+      ]
+    },
+    {
+      "id": "2001.10179",
+      "split": "train",
+      "parent_ids": [
+        "qasper:2001.10179"
+      ],
+      "family_ids": [
+        "qasper-paper:2001.10179"
+      ],
+      "source_sha256": [
+        "3f3e730f4adbf5c81abb3f970101695d302b7c31d5d556540d53355ca2bd5241"
+      ]
+    },
+    {
+      "id": "1811.01088",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1811.01088"
+      ],
+      "family_ids": [
+        "qasper-paper:1811.01088"
+      ],
+      "source_sha256": [
+        "70ccdfc31775e4345ad3e153dcd152ed09b7e33b774f0bfac48cf82d120e1591"
+      ]
+    },
+    {
+      "id": "1911.03058",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1911.03058"
+      ],
+      "family_ids": [
+        "qasper-paper:1911.03058"
+      ],
+      "source_sha256": [
+        "aa074b8f72d73aa168f2fb79c5a51699265e3e133397346f29813c8ec3301d77"
+      ]
+    },
+    {
+      "id": "1811.00854",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1811.00854"
+      ],
+      "family_ids": [
+        "qasper-paper:1811.00854"
+      ],
+      "source_sha256": [
+        "46b423aaf910ab27038da6205ff4825a337f0be69d52ea573eba5b2830103e2d"
+      ]
+    },
+    {
+      "id": "1908.06379",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1908.06379"
+      ],
+      "family_ids": [
+        "qasper-paper:1908.06379"
+      ],
+      "source_sha256": [
+        "953a1a32e1426b4588e695e997fef6844c5d8553c6b1c278e7fbc8357ff6a07a"
+      ]
+    },
+    {
+      "id": "1905.11037",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1905.11037"
+      ],
+      "family_ids": [
+        "qasper-paper:1905.11037"
+      ],
+      "source_sha256": [
+        "ddb54a25aaacfeb5e8401f2e70eccaee33d55431e498432a29f99faaf21c6ba5"
+      ]
+    },
+    {
+      "id": "1709.10217",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1709.10217"
+      ],
+      "family_ids": [
+        "qasper-paper:1709.10217"
+      ],
+      "source_sha256": [
+        "1f271c35544cb6c15d951e228e890ccb808ec6a5cb1f9a7e065bc1586d50911e"
+      ]
+    },
+    {
+      "id": "1804.00520",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1804.00520"
+      ],
+      "family_ids": [
+        "qasper-paper:1804.00520"
+      ],
+      "source_sha256": [
+        "0c36eb56f168f9cda115a22aca07b1a4f391eaf36a0344d42c3eab45ddd81359"
+      ]
+    }
+  ],
+  "train_ids": [
+    "1901.04899",
+    "2004.04315",
+    "1909.11189",
+    "2001.10179",
+    "1811.01088",
+    "1911.03058",
+    "1811.00854"
+  ],
+  "validation_ids": [
+    "1907.12108",
+    "1908.06379",
+    "1905.11037",
+    "1709.10217",
+    "1804.00520"
+  ],
+  "ordered_targets": [
+    [
+      "1901.04899",
+      "q1"
+    ],
+    [
+      "1901.04899",
+      "q2"
+    ],
+    [
+      "2004.04315",
+      "q1"
+    ],
+    [
+      "1909.11189",
+      "q1"
+    ],
+    [
+      "1909.11189",
+      "q2"
+    ],
+    [
+      "1811.01088",
+      "q2"
+    ],
+    [
+      "1911.03058",
+      "q1"
+    ],
+    [
+      "1811.00854",
+      "q1"
+    ],
+    [
+      "1811.00854",
+      "q2"
+    ]
+  ],
+  "epochs": 1,
+  "max_updates": 9,
+  "learning_rate": 0.0001,
+  "gradient_clip": 1.0,
+  "optimizer": "AdamW FP32 master weights, weight_decay=0, betas=.9/.999, eps=1e-8; deployment heads remain BF16",
+  "trainable_tensor_names": [
+    "0.key_scalar_head.weight",
+    "0.key_scalar_head.bias",
+    "0.value_scalar_head.weight",
+    "0.value_scalar_head.bias",
+    "1.key_scalar_head.weight",
+    "1.key_scalar_head.bias",
+    "1.value_scalar_head.weight",
+    "1.value_scalar_head.bias",
+    "2.key_scalar_head.weight",
+    "2.key_scalar_head.bias",
+    "2.value_scalar_head.weight",
+    "2.value_scalar_head.bias",
+    "3.key_scalar_head.weight",
+    "3.key_scalar_head.bias",
+    "3.value_scalar_head.weight",
+    "3.value_scalar_head.bias",
+    "4.key_scalar_head.weight",
+    "4.key_scalar_head.bias",
+    "4.value_scalar_head.weight",
+    "4.value_scalar_head.bias",
+    "5.key_scalar_head.weight",
+    "5.key_scalar_head.bias",
+    "5.value_scalar_head.weight",
+    "5.value_scalar_head.bias",
+    "6.key_scalar_head.weight",
+    "6.key_scalar_head.bias",
+    "6.value_scalar_head.weight",
+    "6.value_scalar_head.bias",
+    "7.key_scalar_head.weight",
+    "7.key_scalar_head.bias",
+    "7.value_scalar_head.weight",
+    "7.value_scalar_head.bias",
+    "8.key_scalar_head.weight",
+    "8.key_scalar_head.bias",
+    "8.value_scalar_head.weight",
+    "8.value_scalar_head.bias",
+    "9.key_scalar_head.weight",
+    "9.key_scalar_head.bias",
+    "9.value_scalar_head.weight",
+    "9.value_scalar_head.bias",
+    "10.key_scalar_head.weight",
+    "10.key_scalar_head.bias",
+    "10.value_scalar_head.weight",
+    "10.value_scalar_head.bias",
+    "11.key_scalar_head.weight",
+    "11.key_scalar_head.bias",
+    "11.value_scalar_head.weight",
+    "11.value_scalar_head.bias",
+    "12.key_scalar_head.weight",
+    "12.key_scalar_head.bias",
+    "12.value_scalar_head.weight",
+    "12.value_scalar_head.bias",
+    "13.key_scalar_head.weight",
+    "13.key_scalar_head.bias",
+    "13.value_scalar_head.weight",
+    "13.value_scalar_head.bias",
+    "14.key_scalar_head.weight",
+    "14.key_scalar_head.bias",
+    "14.value_scalar_head.weight",
+    "14.value_scalar_head.bias",
+    "15.key_scalar_head.weight",
+    "15.key_scalar_head.bias",
+    "15.value_scalar_head.weight",
+    "15.value_scalar_head.bias",
+    "16.key_scalar_head.weight",
+    "16.key_scalar_head.bias",
+    "16.value_scalar_head.weight",
+    "16.value_scalar_head.bias",
+    "17.key_scalar_head.weight",
+    "17.key_scalar_head.bias",
+    "17.value_scalar_head.weight",
+    "17.value_scalar_head.bias",
+    "18.key_scalar_head.weight",
+    "18.key_scalar_head.bias",
+    "18.value_scalar_head.weight",
+    "18.value_scalar_head.bias",
+    "19.key_scalar_head.weight",
+    "19.key_scalar_head.bias",
+    "19.value_scalar_head.weight",
+    "19.value_scalar_head.bias",
+    "20.key_scalar_head.weight",
+    "20.key_scalar_head.bias",
+    "20.value_scalar_head.weight",
+    "20.value_scalar_head.bias",
+    "21.key_scalar_head.weight",
+    "21.key_scalar_head.bias",
+    "21.value_scalar_head.weight",
+    "21.value_scalar_head.bias",
+    "22.key_scalar_head.weight",
+    "22.key_scalar_head.bias",
+    "22.value_scalar_head.weight",
+    "22.value_scalar_head.bias",
+    "23.key_scalar_head.weight",
+    "23.key_scalar_head.bias",
+    "23.value_scalar_head.weight",
+    "23.value_scalar_head.bias",
+    "24.key_scalar_head.weight",
+    "24.key_scalar_head.bias",
+    "24.value_scalar_head.weight",
+    "24.value_scalar_head.bias",
+    "25.key_scalar_head.weight",
+    "25.key_scalar_head.bias",
+    "25.value_scalar_head.weight",
+    "25.value_scalar_head.bias",
+    "26.key_scalar_head.weight",
+    "26.key_scalar_head.bias",
+    "26.value_scalar_head.weight",
+    "26.value_scalar_head.bias",
+    "27.key_scalar_head.weight",
+    "27.key_scalar_head.bias",
+    "27.value_scalar_head.weight",
+    "27.value_scalar_head.bias"
+  ],
+  "methods": [
+    "text_full",
+    "text_brief",
+    "c2c_shared",
+    "c2c_adapted"
+  ],
+  "checkpoint_policy": "final only; no validation-dependent selection or extra updates",
+  "validation_denominator": 10,
+  "validation_outputs_expected": 40,
+  "training_candidates_denominator": 14,
+  "worker_budget": 96,
+  "worker_constraints": false,
+  "validation_labels_available_to_runner": false,
+  "input_sha256": {
+    "data/handoff-candidates-v1/public.json": "8f1050dc782871e3e6b36ad45eff4f8ef98895b407d874221a6dc6fe6019e1aa",
+    "data/handoff-candidates-v2/public.json": "1b12f2bfe175f43863d95edf7ba98dd08c4c256ca6f97cb01fa0f3f97cd72216",
+    "data/handoff-candidates-v2/training-targets.json": "6289ad7c5ccd9941e57516674deccea5360faac46e06773910fc50cf09246c81",
+    "configs/data-exclusions.json": "3dadb5b54f59b2791a26b8f58206ec2df9fa502ad966c674db2879fb2d02cf4a",
+    "configs/cloud.json": "2ea7e21156751efe78f500fc9809d79f9b9209121a3c7c11ca6668bd229a1fa4",
+    "configs/cloud.models.lock.json": "118b6a04f763164360f9057c16b682629d9b275ae40230cfb127cc9249e45bb3",
+    "configs/fuser-adaptation-candidate.json": "7933da26b54039e8c1d0cc4ac297707d50231371f3abac290048dd3016047a56"
+  }
+}

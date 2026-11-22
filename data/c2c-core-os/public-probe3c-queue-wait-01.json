@@ -1,0 +1,85 @@
+{
+  "id": "os-c2c-probe3c-queue-wait-01",
+  "goal": "Choose the next scheduling plan by this rule: if queue_wait_seconds exceeds 300 s, the plan is: notify the submitter of the wait; otherwise: let the queue drain in order. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 4,
+      "gpu_slots": 0,
+      "memory_mb": 8192,
+      "max_parallel_tasks": 2,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "qa",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048,
+        "estimated_duration_s": 120
+      },
+      {
+        "id": "lint",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 90
+      },
+      {
+        "id": "bench",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048,
+        "estimated_duration_s": 150
+      },
+      {
+        "id": "preview",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      }
+    ],
+    "pending_decision": {
+      "field": "queue_wait_seconds",
+      "question": "The runtime admits QUEUED jobs strictly in order ahead of preview. How many seconds must preview wait before it can start (sum of estimated durations of all jobs ahead of it)?",
+      "controller_note": "The plan branch for queue_wait_seconds depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "qa",
+        "event": "queued_behind_none",
+        "estimated_duration_s": 120
+      },
+      {
+        "queue": "default",
+        "event": "order",
+        "ahead_of_preview": [
+          "qa",
+          "lint",
+          "bench"
+        ]
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 4,
+    "free_gpu_slots": 0,
+    "free_memory_mb": 8192,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran. preview is behind qa, lint and bench in the admission queue; nothing is running yet."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Seconds preview must wait: sum of estimated durations of queued jobs ahead of it.",
+    "expected_answer": 360,
+    "derivation": "qa 120 + lint 90 + bench 150 = 360."
+  }
+}

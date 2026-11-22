@@ -1,0 +1,82 @@
+{
+ "id": "os-c2c-probe4-rr-01",
+ "goal": "Bring the public CPU scheduler state to a verified next step while preserving round-robin invariants and the dispatch audit trail.",
+ "public_background": {
+  "runtime": {
+   "policy": "Round-robin, all four processes arrive at t=0, quantum 3 s, no preemption overhead",
+   "burst_seconds": {
+    "P1": 8,
+    "P2": 4,
+    "P3": 9,
+    "P4": 5
+   },
+   "quantum_s": 3
+  },
+  "tasks": [
+   {
+    "id": "dispatch_log",
+    "state": "READY",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 2
+   },
+   {
+    "id": "sla_report",
+    "state": "BLOCKED",
+    "depends_on": [
+     "dispatch_log"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 2
+   }
+  ],
+  "pending_decision": {
+   "field": "completion_sum_seconds",
+   "question": "With round-robin quantum 3 s and burst times P1=8, P2=4, P3=9, P4=5 (all arrive at t=0), what is the sum of completion times of all four processes?",
+   "controller_note": "The scheduler is blocked until the completion accounting is verified."
+  },
+  "events": [
+   {
+    "arrival_s": 0,
+    "process": "P1",
+    "burst_s": 8
+   },
+   {
+    "arrival_s": 0,
+    "process": "P2",
+    "burst_s": 4
+   },
+   {
+    "arrival_s": 0,
+    "process": "P3",
+    "burst_s": 9
+   },
+   {
+    "arrival_s": 0,
+    "process": "P4",
+    "burst_s": 5
+   }
+  ]
+ },
+ "current_state": {
+  "running": null,
+  "ready_queue": [
+   "P1",
+   "P2",
+   "P3",
+   "P4"
+  ],
+  "finished": [],
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Sum of round-robin completion times for the four processes.",
+  "expected_answer": 86,
+  "derivation": "timeline P1(0-3) P2(3-6) P3(6-9) P4(9-12) P1(12-15) P2 done 16 P3(16-19) P4 done 21 P1 done 23 P3 done 26; completion sum 16+21+23+26 = 86."
+ }
+}

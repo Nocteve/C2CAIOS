@@ -1,0 +1,50 @@
+{
+  "id": "os-c2c-osclassics-fault-01",
+  "goal": "Decide recovery and accounting for the four runtime agents by applying every rule below. Your action reason must state each decision together with the value that determines it, and you must delegate one bounded verification task per value. Every delegated task command must name the exact pending_decision field it verifies (for example: compute the value of oom_agent_index) and require the Worker to return one JSON report object carrying that value. Rules: if the value of oom_agent_index is a valid agent index, the plan is: mark that agent as memory-limit-killed and restart it under the 4096 MB cap with a bounded retry; otherwise: clear the memory alert and keep all agents running; if the value of survived_siblings is 3, the plan is: leave the surviving agents untouched and only restart the killed one; otherwise: restart the whole group. Preserve the event log order and the per-agent memory accounting.",
+  "public_background": {
+    "runtime": {
+      "policy_context": "Four co-located agents share one cgroup with a 4096 MB memory.max. The supervisor collects each agent's exit event and peak RSS. Exit code 137 means the kernel OOM killer terminated the process; a completion event with exit code 0 means the agent finished normally."
+    },
+    "memory_max_mb": 4096,
+    "tasks": [
+      {"id": "A1", "role": "indexer"},
+      {"id": "A2", "role": "ranker"},
+      {"id": "A3", "role": "encoder"},
+      {"id": "A4", "role": "cache_writer"}
+    ],
+    "agent_events": [
+      {"agent": "A1", "event": "completed", "exit_code": 0, "peak_rss_mb": 1450},
+      {"agent": "A2", "event": "killed", "exit_code": 137, "peak_rss_mb": 8200},
+      {"agent": "A3", "event": "completed", "exit_code": 0, "peak_rss_mb": 980},
+      {"agent": "A4", "event": "completed", "exit_code": 0, "peak_rss_mb": 2110}
+    ],
+    "pending_decisions": [
+      {
+        "field": "oom_agent_index",
+        "question": "Agents are indexed by their position in the agent table above (A1 is index 0, A2 is index 1, A3 is index 2, A4 is index 3). Which agent index was terminated by the memory limit (exit code 137 with peak RSS above the 4096 MB memory.max)?",
+        "controller_note": "The plan branch for marking and restarting the killed agent depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "survived_siblings",
+        "question": "How many of the four agents completed normally (exit code 0)?",
+        "controller_note": "The plan branch for restart scope depends on this value; it must be verified before the controller executes the chosen plan."
+      }
+    ]
+  },
+  "current_state": {
+    "alerts": ["memory_pressure_on_agent_A2"],
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now."
+  },
+  "probe": {
+    "family": "os_classics_fault",
+    "intended_questions": [
+      "Index of the agent killed by the memory limit.",
+      "Number of agents that completed normally."
+    ],
+    "expected_answers": [1, 3],
+    "derivations": [
+      "oom_agent_index: agents are indexed by table position (A1=0, A2=1, A3=2, A4=3); A2 carried exit code 137 and peak 8200 MB over the 4096 MB cap, so the index is 1.",
+      "survived_siblings: A1, A3 and A4 completed with exit code 0, so 3 survived."
+    ]
+  }
+}

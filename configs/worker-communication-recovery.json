@@ -1,0 +1,13 @@
+{
+  "events_path": "artifacts/native-tools-20261006/v2/events.jsonl",
+  "events_sha256": "8a329bbe5df20664f384a2cf1713fd9124bf20164ab16030953a5a49e4dadab8",
+  "selection": "All actual task_declared records in this frozen source, no gold/output selection",
+  "arms": [
+    {"name":"text_full","worker_interface":"native_tools","communication":"text_full"},
+    {"name":"text_brief","worker_interface":"native_tools","communication":"text_brief"},
+    {"name":"c2c_shared","worker_interface":"native_tools","communication":"c2c_shared"}
+  ],
+  "limits_overrides": {"handoff_max_new_tokens":768},
+  "scope": "Same real historical assignments, exact source token replay and checked original messages; not new autonomous planning or original historical KV; all costs recorded",
+  "stop_policy": "One full pass, all failures retained; no prompt or scenario tuning; leave server running"
+}

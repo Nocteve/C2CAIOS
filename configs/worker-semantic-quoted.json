@@ -1,0 +1,32 @@
+{
+  "protocol": "one_pass_independent_receiver_semantics_v1",
+  "data_directory": "data/job-config-semantic-dev-four",
+  "methods": [
+    "text_full"
+  ],
+  "max_decisions": 8,
+  "max_delegations": 4,
+  "max_active_workers": 2,
+  "planner_max_new_tokens": 512,
+  "worker_max_new_tokens": 384,
+  "worker_max_model_calls": 2,
+  "max_generated_tokens_per_parent": 7168,
+  "worker_deadline_seconds": 180,
+  "model_service_deadline_seconds": 240,
+  "case_deadline_seconds": 600,
+  "worker_decode": "free greedy, validate actual JSON afterwards, no output masking or content repair",
+  "planner_decode": "greedy with JSON action grammar, all action decisions produced by the model",
+  "training": false,
+  "forced_delegation": false,
+  "automatic_semantic_repair": false,
+  "c2c_enabled": false,
+  "runtime_feedback": "each new Planner context receives current files/check, exact current task ledger and actual proposals, last action/result and an optional Planner-authored note; full events remain on disk",
+  "shared_system": "current explicit invocation selects Planner or Worker role at the same instruction level",
+  "scope": "Four new configuration development parents; autonomous optional delegation; receiver interface comparison only",
+  "planner_state_packet": true,
+  "planner_context_mode": "fresh_current_state",
+  "worker_transport_policy": "accept a single complete JSON object with optional outer code fence; allow informational summary on check/inspect; preserve actual action and values, record original strict-contract status, reject truncation and unauthorized edits",
+  "enforce_action_preconditions": true,
+  "worker_context_mode": "independent_session",
+  "stop_policy": "one complete pass; no sampling, budget or prompt recovery; keep all failures; zero delegation is valid"
+}

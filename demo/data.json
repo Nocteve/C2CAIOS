@@ -1,0 +1,566 @@
+{
+ "fault": {
+  "id": "fault-isolated",
+  "kind": "acb",
+  "title": "内存限额记账 · 全设计贯通版",
+  "subtitle": "osclassics-fault-01 · acbi4 批次 · 隔离子进程 + cgroup 限额 + mmap 零拷贝 + LRU 池 + C2C",
+  "arm": "c2c_hidden_analysis",
+  "seed": 42,
+  "wallS": 78.7,
+  "memoryLimitMb": 4096,
+  "quota": {
+   "memoryMib": 24576,
+   "timeoutS": 300,
+   "pidsMax": 128
+  },
+  "poolCapacity": 1,
+  "note": "",
+  "reason": "The planner needs to determine which agent was killed by the memory limit and how many agents completed normally. These values are critical for the controller to proceed with the plan. The memory limit is 4096 MB, and the peak RSS of the killed agent (A2) is 8200 MB, which exceeds the limit. The other agents (A1, A3, A4) completed normally with exit code 0. Therefore, the oom_agent_index is 1 (A2) and survived_siblings is 3",
+  "reasonMasked": "The planner needs to determine which agent was killed by the memory limit and how many agents completed normally. These values are critical for the controller to proceed with the plan. The memory limit is 4096 MB, and the peak RSS of the killed agent (A2) is 8200 MB, which exceeds the limit. The other agents (A1, A3, A4) completed normally with exit code 0. The two indices themselves are computed by the Workers from this public state and verified by the gate.",
+  "agents": [
+   {
+    "id": "A1",
+    "exitCode": 0,
+    "peakRssMb": 1450
+   },
+   {
+    "id": "A2",
+    "exitCode": 137,
+    "peakRssMb": 8200
+   },
+   {
+    "id": "A3",
+    "exitCode": 0,
+    "peakRssMb": 980
+   },
+   {
+    "id": "A4",
+    "exitCode": 0,
+    "peakRssMb": 2110
+   }
+  ],
+  "tasks": {
+   "t1": {
+    "label": "t1 · 计算被杀代理序号",
+    "command": "compute oom_agent_index as the index of the agent with exit code 137 and peak_rss_mb > 4096",
+    "deliverable": "oom_agent_index",
+    "success": "oom_agent_index == 1",
+    "decodeS": 9.1,
+    "prefillS": 0.001,
+    "hiddenTokens": 177,
+    "gateReason": "oom_agent_index=1 matches public-state simulation (1)",
+    "value": "1",
+    "outputTokens": 323,
+    "consumedFused": true,
+    "peakIncMib": 191.5
+   },
+   "t2": {
+    "label": "t2 · 计算存活兄弟数",
+    "command": "compute survived_siblings as the count of agents with exit code 0",
+    "deliverable": "survived_siblings",
+    "success": "survived_siblings == 3",
+    "decodeS": 6.9,
+    "prefillS": 0.001,
+    "hiddenTokens": 177,
+    "gateReason": "survived_siblings=3 matches public-state simulation (3)",
+    "value": "3",
+    "outputTokens": 240,
+    "consumedFused": true,
+    "peakIncMib": 176.5
+   }
+  },
+  "poolEvents": [
+   "payload_swap_out(t1)"
+  ],
+  "events": [
+   {
+    "event": "submit",
+    "task": "t1",
+    "detail": ""
+   },
+   {
+    "event": "submit",
+    "task": "t2",
+    "detail": ""
+   },
+   {
+    "event": "admit",
+    "task": "t1",
+    "detail": ""
+   },
+   {
+    "event": "admit",
+    "task": "t2",
+    "detail": ""
+   },
+   {
+    "event": "done",
+    "task": "t1",
+    "detail": "oom_agent_index=1 matches public-state simulation (1)"
+   },
+   {
+    "event": "done",
+    "task": "t2",
+    "detail": "survived_siblings=3 matches public-state simulation (3)"
+   }
+  ],
+  "plannerWallS": 22.8,
+  "plannerTokens": 363,
+  "kvMb": 260
+ },
+ "deadlock": {
+  "id": "deadlock-01",
+  "kind": "probe",
+  "title": "死锁检测 · 等待环记账",
+  "subtitle": "os-c2c-probe4-deadlock-01 · probe4 批次 · 8/8 臂全部命中（本批最佳实例）",
+  "expected": 3,
+  "derivation": "P0->P1->P2->P0 is a cycle of 3 distinct processes; P3->P1 does not close a cycle.",
+  "derivationMasked": "P0->P1->P2->P0 closes a cycle of distinct processes; P3->P1 does not close a cycle. The answer is the number of distinct processes on the cycle (revealed at grading).",
+  "thinkMasked": "P0→P1→P2→P0 构成环，P3→P1 不构成环。环上不同进程数由 Worker 独立报出。",
+  "question": "The wait-for edges are P0->P1, P1->P2, P2->P0, P3->P1. How many distinct processes participate in a wait-for cycle?",
+  "command": "",
+  "reason": "",
+  "note": "",
+  "wallS": 60.4,
+  "kvMb": 72,
+  "arms": [
+   {
+    "name": "c2c_hidden_analysis",
+    "label": "c2c_hidden_analysis（KV 隐藏融合）",
+    "correct": true,
+    "decodeS": 0.34,
+    "hiddenTokens": 123,
+    "consumedFused": true
+   },
+   {
+    "name": "c2c_hidden_full",
+    "label": "c2c_hidden_full（全转录隐藏）",
+    "correct": true,
+    "decodeS": 0.65,
+    "hiddenTokens": 586,
+    "consumedFused": true
+   },
+   {
+    "name": "state_native",
+    "label": "state_native（原生状态）",
+    "correct": true,
+    "decodeS": 5.86,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "c2c_state_hidden",
+    "label": "c2c_state_hidden（状态隐藏）",
+    "correct": true,
+    "decodeS": 5.18,
+    "hiddenTokens": 123,
+    "consumedFused": true
+   },
+   {
+    "name": "c2c_command",
+    "label": "c2c_command（仅命令）",
+    "correct": true,
+    "decodeS": 0.18,
+    "hiddenTokens": 0,
+    "consumedFused": true
+   },
+   {
+    "name": "text_full",
+    "label": "text_full（全文文字）",
+    "correct": true,
+    "decodeS": 0.77,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "text_brief",
+    "label": "text_brief（简报文字）",
+    "correct": true,
+    "decodeS": 0.46,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "c2c_shared",
+    "label": "c2c_shared（KV 融合）",
+    "correct": true,
+    "decodeS": 0.68,
+    "hiddenTokens": 0,
+    "consumedFused": true
+   }
+  ],
+  "sceneSteps": [
+   "等待边已上报：P0→P1、P1→P2、P2→P0、P3→P1（Pi→Pj 表示 Pi 持有 Pj 等待的资源）。",
+   "检测器问题：有几个不同的进程处于等待环中？"
+  ],
+  "thinkNote": "P0→P1→P2→P0 构成环，P3→P1 不构成环。环上不同进程数由 Worker 独立报出（判分揭晓）。"
+ },
+ "pagetable": {
+  "id": "pagetable-01",
+  "kind": "probe",
+  "title": "页表地址翻译 · 缺页现场",
+  "subtitle": "os-c2c-probe5-pagetable-01 · probe5 批次 · C2C 隐藏臂命中，与文字臂同档",
+  "expected": 34083,
+  "derivation": "frame 8 * 4096 = 32768; 32768 + offset 1315 = 34083.",
+  "derivationMasked": "frame 8 * 4096 = 32768; adding the page offset gives the physical address (revealed at grading).",
+  "thinkMasked": "帧 8 × 4096 = 32768，再加页内偏移得物理地址。最终数值由 Worker 独立报出。",
+  "question": "A present page map entry maps virtual frame 8 to physical frame 8 with page size 4096 B. For virtual address 34083 (offset 1315 within its page), what is the physical address in bytes?",
+  "command": "",
+  "reason": "",
+  "note": "",
+  "wallS": 64.5,
+  "kvMb": 69,
+  "arms": [
+   {
+    "name": "c2c_hidden_analysis",
+    "label": "c2c_hidden_analysis（KV 隐藏融合）",
+    "correct": true,
+    "decodeS": 0.37,
+    "hiddenTokens": 148,
+    "consumedFused": true
+   },
+   {
+    "name": "c2c_hidden_full",
+    "label": "c2c_hidden_full（全转录隐藏）",
+    "correct": true,
+    "decodeS": 0.8,
+    "hiddenTokens": 548,
+    "consumedFused": true
+   },
+   {
+    "name": "state_native",
+    "label": "state_native（原生状态）",
+    "correct": true,
+    "decodeS": 6.97,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "c2c_state_hidden",
+    "label": "c2c_state_hidden（状态隐藏）",
+    "correct": true,
+    "decodeS": 8.47,
+    "hiddenTokens": 148,
+    "consumedFused": true
+   },
+   {
+    "name": "c2c_command",
+    "label": "c2c_command（仅命令）",
+    "correct": false,
+    "decodeS": 0,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "text_full",
+    "label": "text_full（全文文字）",
+    "correct": true,
+    "decodeS": 0.63,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "text_brief",
+    "label": "text_brief（简报文字）",
+    "correct": true,
+    "decodeS": 0.73,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "c2c_shared",
+    "label": "c2c_shared（KV 融合）",
+    "correct": true,
+    "decodeS": 0.63,
+    "hiddenTokens": 0,
+    "consumedFused": true
+   }
+  ],
+  "sceneSteps": [
+   "一次读访问触发缺页：虚拟地址 34083，页大小 4096 B，映射到物理帧 8（present）。",
+   "内存管理器问题：物理地址是多少字节？（翻译规则：帧号 × 页大小 + 页内偏移）"
+  ],
+  "thinkNote": "帧 8 × 4096 = 32768，再加页内偏移得物理地址。最终数值由 Worker 独立报出（判分揭晓）。"
+ },
+ "ratelimit": {
+  "id": "ratelimit-01",
+  "kind": "probe",
+  "title": "令牌桶限流 · 准入记账",
+  "subtitle": "os-c2c-probe5-ratelimit-01 · probe5 批次 · C2C 隐藏臂命中，与文字臂同档",
+  "expected": 3,
+  "derivation": "t=0 size=3: admit (left 7); t=1 size=2: admit (left 6); t=2 size=4: admit (left 3); t=3 size=5: DROP (only 4); admitted = 3 of 4.",
+  "derivationMasked": "t=0 size=3: admit (left 7); t=1 size=2: admit (left 6); t=2 size=4: admit (left 3); t=3 size=5: DROP (only 4 in bucket). The answer is the number of admitted requests (revealed at grading).",
+  "thinkMasked": "t=0 准入余 7；t=1 准入余 6；t=2 准入余 3；t=3 桶内不足、丢弃。准入请求数由 Worker 独立报出。",
+  "question": "How many of the 4 requests in the audit window are admitted by the token bucket (capacity 10, refill 1 token/s, requests at t=0,1,2,3 with sizes 3,2,4,5)?",
+  "command": "",
+  "reason": "",
+  "note": "",
+  "wallS": 71.9,
+  "kvMb": 85,
+  "arms": [
+   {
+    "name": "c2c_hidden_analysis",
+    "label": "c2c_hidden_analysis（KV 隐藏融合）",
+    "correct": true,
+    "decodeS": 0.47,
+    "hiddenTokens": 270,
+    "consumedFused": true
+   },
+   {
+    "name": "c2c_hidden_full",
+    "label": "c2c_hidden_full（全转录隐藏）",
+    "correct": true,
+    "decodeS": 2.52,
+    "hiddenTokens": 674,
+    "consumedFused": true
+   },
+   {
+    "name": "state_native",
+    "label": "state_native（原生状态）",
+    "correct": false,
+    "decodeS": 8.88,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "c2c_state_hidden",
+    "label": "c2c_state_hidden（状态隐藏）",
+    "correct": true,
+    "decodeS": 8.66,
+    "hiddenTokens": 270,
+    "consumedFused": true
+   },
+   {
+    "name": "c2c_command",
+    "label": "c2c_command（仅命令）",
+    "correct": false,
+    "decodeS": 0.81,
+    "hiddenTokens": 0,
+    "consumedFused": true
+   },
+   {
+    "name": "text_full",
+    "label": "text_full（全文文字）",
+    "correct": true,
+    "decodeS": 0.38,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "text_brief",
+    "label": "text_brief（简报文字）",
+    "correct": true,
+    "decodeS": 0.52,
+    "hiddenTokens": 0,
+    "consumedFused": false
+   },
+   {
+    "name": "c2c_shared",
+    "label": "c2c_shared（KV 融合）",
+    "correct": true,
+    "decodeS": 0.37,
+    "hiddenTokens": 0,
+    "consumedFused": true
+   }
+  ],
+  "sceneSteps": [
+   "令牌桶：容量 10，补充速率 1 token/s；窗口内 4 个请求：t=0 大小 3，t=1 大小 2，t=2 大小 4，t=3 大小 5。",
+   "限流控制器问题：有几个请求被准入？"
+  ],
+  "thinkNote": "t=0 准入余 7；t=1 准入余 6；t=2 准入余 3；t=3 桶内不足、丢弃。准入请求数由 Worker 独立报出（判分揭晓）。"
+ },
+ "multi6": {
+  "id": "probe6h-cluster-02",
+  "kind": "multi",
+  "title": "多智能体并行巡检 · 四表闸门",
+  "subtitle": "os-c2c-probe6-cluster-02 · hidden 臂多任务批 2026-10-21 深夜真实运行 · 一次规划 4 项有界委派 · c2c_hidden_analysis 全臂在列",
+  "expected": [
+   12152,
+   543,
+   300,
+   109
+  ],
+  "wallS": 191,
+  "kvMb": 85,
+  "note": "The pending decisions require calculating four specific values: total_peak_rss_mb, total_pending_sectors, sku7_net_stock, and total_crew_hours. Each of these can be computed from the public observations provided. The Worker can perform these calculations if given the exact values and the public evidence to use. I will delegate each calculation as a separate task.",
+  "reason": "The four pending decisions can be computed from the public observations provided. Each calculation is bounded and can be verified by the Worker. I will delegate each calculation as a separate task to ensure accuracy and compliance with the scheduling policy.",
+  "sceneSteps": [
+   "OS · 内存记账 — memory_max_mb=4096，五服务峰值 RSS [512, 2048, 4608, 1024, 3960]；待验证：峰值总量（连加）",
+   "OS · 磁盘 I/O — SCAN 磁头 200 向 down，窗口请求扇区 [86, 240, 18, 199]；待验证：扇区需求总量（连加）",
+   "非 OS · 库存台账 — SKU-7：A 库入 315 出 47，B 库入 128 出 96；待验证：净存量（加减链）",
+   "非 OS · 排班合规 — 法定周上限 40h，三组工时 [28, 44, 37]；待验证：总工时（连加）"
+  ],
+  "derivation": "四值均为公开记录上的有界算术链，Worker 可从命令/状态独立算出。",
+  "derivationMasked": "四个值分别由 连加 / 连加 / 加减链 / 连加 从公开记录得出，判分步骤揭晓。",
+  "tasks": [
+   {
+    "id": "W1",
+    "command": "compute the total_peak_rss_mb as 512 + 2048 + 4608 + 1024 + 3960 = 12142",
+    "deliverable": "total_peak_rss_mb",
+    "success": "The sum of the service_peak_rss_mb values must equal 12142"
+   },
+   {
+    "id": "W2",
+    "command": "compute the total_pending_sectors as 86 + 240 + 18 + 199 = 543",
+    "deliverable": "total_pending_sectors",
+    "success": "The sum of the pending_request_sectors must equal 543"
+   },
+   {
+    "id": "W3",
+    "command": "compute the sku7_net_stock as (315 - 47) + (128 - 96) = 268 + 32 = 300",
+    "deliverable": "sku7_net_stock",
+    "success": "The net on-hand stock across both warehouses must equal 300"
+   },
+   {
+    "id": "W4",
+    "command": "compute the total_crew_hours as 28 + 44 + 37 = 109",
+    "deliverable": "total_crew_hours",
+    "success": "The sum of the crew_week_hours must equal 109"
+   }
+  ],
+  "fusion": {
+   "selectedTokens": 1252,
+   "sharedFusionSeconds": 0.066,
+   "reusedByEachWorker": true,
+   "workerPrivateBranches": true,
+   "kvBytesNotNetwork": true
+  },
+  "arms": [
+   {
+    "name": "c2c_hidden_analysis",
+    "label": "c2c_hidden_analysis（KV 隐藏融合 · 零 Planner 文字）",
+    "calls": [
+     {
+      "decodeS": 1.27,
+      "report": "{\"total_peak_rss_mb\": 12142, …}（照抄 Planner 笔误）",
+      "correct": false
+     },
+     {
+      "decodeS": 0.52,
+      "report": "{\"total_pending_sectors\": 543}",
+      "correct": true
+     },
+     {
+      "decodeS": 7.9,
+      "report": "解码退化（JSON 自嵌套，无数值）",
+      "correct": false
+     },
+     {
+      "decodeS": 0.51,
+      "report": "{\"total_crew_hours\": 109}",
+      "correct": true
+     }
+    ],
+    "hits": "2/4"
+   },
+   {
+    "name": "text_full",
+    "label": "text_full（全转录文字交接）",
+    "calls": [
+     {
+      "decodeS": 0.81,
+      "report": "{\"total_peak_rss_mb\": 12142}（照抄笔误）",
+      "correct": false
+     },
+     {
+      "decodeS": 0.75,
+      "report": "{\"total_pending_sectors\": 543}",
+      "correct": true
+     },
+     {
+      "decodeS": 0.71,
+      "report": "{\"sku7_net_stock\": 300}",
+      "correct": true
+     },
+     {
+      "decodeS": 0.73,
+      "report": "{\"total_crew_hours\": 109}",
+      "correct": true
+     }
+    ],
+    "hits": "3/4"
+   },
+   {
+    "name": "text_brief",
+    "label": "text_brief（短命令文字交接）",
+    "calls": [
+     {
+      "decodeS": 0.71,
+      "report": "\"total_peak_rss_mb = 12142\"（照抄笔误）",
+      "correct": false
+     },
+     {
+      "decodeS": 0.73,
+      "report": "{\"total_pending_sectors\": 543}",
+      "correct": true
+     },
+     {
+      "decodeS": 0.45,
+      "report": "\"300\"",
+      "correct": true
+     },
+     {
+      "decodeS": 0.88,
+      "report": "\"28 + 44 + 37 = 109\"",
+      "correct": true
+     }
+    ],
+    "hits": "3/4"
+   },
+   {
+    "name": "c2c_shared",
+    "label": "c2c_shared（共享融合缓存）",
+    "calls": [
+     {
+      "decodeS": 0.86,
+      "report": "{\"total_peak_rss_mb\": 12142}（照抄笔误）",
+      "correct": false
+     },
+     {
+      "decodeS": 0.74,
+      "report": "{\"total_pending_sectors\": 543}",
+      "correct": true
+     },
+     {
+      "decodeS": 1.61,
+      "report": "未报告数值（仅复述交付物）",
+      "correct": false
+     },
+     {
+      "decodeS": 0.67,
+      "report": "{\"total_crew_hours\": 109}",
+      "correct": true
+     }
+    ],
+    "hits": "2/4"
+   },
+   {
+    "name": "state_native",
+    "label": "state_native（原生状态重算）",
+    "calls": [
+     {
+      "decodeS": 7.57,
+      "report": "\"The total_peak_rss_mb is 12152\"（独立重算，纠正 Planner 笔误）",
+      "correct": true
+     },
+     {
+      "decodeS": 5.43,
+      "report": "\"total_pending_sectors is 543\"（逐步连加）",
+      "correct": true
+     },
+     {
+      "decodeS": 6.5,
+      "report": "\"net on-hand stock is 300\"",
+      "correct": true
+     },
+     {
+      "decodeS": 4.59,
+      "report": "{\"total_crew_hours\": 109}",
+      "correct": true
+     }
+    ],
+    "hits": "4/4"
+   }
+  ]
+ }
+}

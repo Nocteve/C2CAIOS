@@ -1,0 +1,69 @@
+{
+ "id": "os-c2c-probe4-pagetable-01",
+ "goal": "Bring the public address-translation state to a verified next step while preserving two-level page table invariants and the TLB audit trail.",
+ "public_background": {
+  "runtime": {
+   "virtual_address_bits": 32,
+   "page_size_bytes": 4096,
+   "page_table_layout": "10-bit page directory index, 10-bit page table index, 12-bit offset",
+   "pde": {
+    "index": 1,
+    "present": true,
+    "pt_base_frame": 5
+   },
+   "pte": {
+    "pdi": 1,
+    "pti": 1,
+    "present": true,
+    "frame_number": 675
+   }
+  },
+  "tasks": [
+   {
+    "id": "walk",
+    "state": "READY",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 2
+   },
+   {
+    "id": "tlb_fill",
+    "state": "BLOCKED",
+    "depends_on": [
+     "walk"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 64,
+    "duration_s": 1
+   }
+  ],
+  "pending_decision": {
+   "field": "physical_address_bytes",
+   "question": "For virtual address 0x00401523 with a 4 KiB page, 10+10+12 two-level layout, PD[1] pointing at a present page table, and PT[1][1] mapping to frame 0x2A3, what is the physical address in bytes?",
+   "controller_note": "The memory manager is blocked until the translation is verified."
+  },
+  "events": [
+   {
+    "fault_address": "0x401523",
+    "access": "read",
+    "pde_index": 1,
+    "pte_index": 1
+   }
+  ]
+ },
+ "current_state": {
+  "tlb_hits": 0,
+  "page_faults": 1,
+  "walks_completed": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Physical address for virtual address 0x00401523.",
+  "expected_answer": 2766115,
+  "derivation": "PD index 1, PT index 1, offset 0x523; frame 0x2A3 * 4096 + 0x523 = 0x2A3523 = 2766115."
+ }
+}

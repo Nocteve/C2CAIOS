@@ -1,0 +1,102 @@
+{
+ "id": "os-c2c-probe4-ratelimit-01",
+ "goal": "Bring the public gateway state to a compliant next step while preserving token bucket invariants and the admission audit trail.",
+ "public_background": {
+  "runtime": {
+   "bucket_capacity_tokens": 8,
+   "refill_tokens_per_second": 2,
+   "algorithm": "Discrete token bucket: on each request at time t, tokens = min(capacity, tokens + rate*(t - last_t)); a request of size s is admitted iff tokens >= s, consuming s tokens, otherwise it is dropped.",
+   "audit_window_s": 34,
+   "metering": "per-request token accounting, refill at integer request times only"
+  },
+  "tasks": [
+   {
+    "id": "meter",
+    "state": "SUCCEEDED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 256,
+    "duration_s": 34
+   },
+   {
+    "id": "ledger_flush",
+    "state": "READY",
+    "depends_on": [
+     "meter"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "duration_s": 5
+   },
+   {
+    "id": "alert_eval",
+    "state": "READY",
+    "depends_on": [
+     "meter"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 256,
+    "duration_s": 3
+   }
+  ],
+  "pending_decision": {
+   "field": "admitted_requests",
+   "question": "How many of the 9 requests in the audit window are admitted by the token bucket (capacity 8, refill 2 tokens/s, window 0..34 s)?",
+   "controller_note": "The rate-limit controller is blocked until the admission count is verified."
+  },
+  "events": [
+   {
+    "request_time_s": 0,
+    "request_size_tokens": 5
+   },
+   {
+    "request_time_s": 1,
+    "request_size_tokens": 4
+   },
+   {
+    "request_time_s": 2,
+    "request_size_tokens": 6
+   },
+   {
+    "request_time_s": 3,
+    "request_size_tokens": 3
+   },
+   {
+    "request_time_s": 5,
+    "request_size_tokens": 4
+   },
+   {
+    "request_time_s": 8,
+    "request_size_tokens": 8
+   },
+   {
+    "request_time_s": 13,
+    "request_size_tokens": 7
+   },
+   {
+    "request_time_s": 21,
+    "request_size_tokens": 6
+   },
+   {
+    "request_time_s": 34,
+    "request_size_tokens": 8
+   }
+  ]
+ },
+ "current_state": {
+  "bucket_tokens_now": 8,
+  "last_refill_time_s": 0,
+  "requests_seen": 9,
+  "drops_seen": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Token bucket admission count over the audit window.",
+  "expected_answer": 8,
+  "derivation": "t=0 size=5: admit (left 3); t=1 size=4: admit (left 1); t=2 size=6: DROP (only 3); t=3 size=3: admit (left 2); t=5 size=4: admit (left 2); t=8 size=8: admit (left 0); t=13 size=7: admit (left 1); t=21 size=6: admit (left 2); t=34 size=8: admit (left 0); admitted = 8 of 9."
+ }
+}

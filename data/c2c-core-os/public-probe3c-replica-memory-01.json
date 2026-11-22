@@ -1,0 +1,71 @@
+{
+  "id": "os-c2c-probe3c-replica-memory-01",
+  "goal": "Choose the next scheduling plan by this rule: if remaining_memory_after_replicas stays at or above 8192 MB, the plan is: admit all replicas now; otherwise: defer one replica. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "router",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      },
+      {
+        "id": "svc",
+        "state": "READY",
+        "depends_on": [
+          "router"
+        ],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "replicas": 3
+      },
+      {
+        "id": "gateway",
+        "state": "BLOCKED",
+        "depends_on": [
+          "svc"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_replicas",
+      "question": "If all replicas of svc are admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The plan branch for remaining_memory_after_replicas depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "svc",
+        "event": "admission_ready",
+        "replicas": 3,
+        "reason": "dependency router is terminal-success"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 7,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 16384,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after admitting all svc replicas.",
+    "expected_answer": 8704,
+    "derivation": "svc total 3 x 2560 = 7680; 16384 - 7680 = 8704."
+  }
+}

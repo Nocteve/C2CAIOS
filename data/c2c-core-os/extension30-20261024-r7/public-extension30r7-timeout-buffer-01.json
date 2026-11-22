@@ -1,0 +1,250 @@
+{
+  "id": "os-c2c-extension30r7-timeout-buffer-01",
+  "goal": "Choose the next scheduling plan by this rule: if effective_timeout_margin_seconds stays at or above 30 s, the plan is: let the task keep running; otherwise: restart the task now. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 6,
+      "gpu_slots": 1,
+      "memory_mb": 12288,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "ingest",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "transcode",
+        "state": "RUNNING",
+        "depends_on": [
+          "ingest"
+        ],
+        "cpu": 2,
+        "gpu": 1,
+        "memory_mb": 3072
+      },
+      {
+        "id": "upload",
+        "state": "BLOCKED",
+        "depends_on": [
+          "transcode"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "effective_timeout_margin_seconds",
+      "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before transcode hits its timeout (remaining time minus the reserved retry buffer)?",
+      "controller_note": "The plan branch for effective_timeout_margin_seconds depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "transcode",
+        "event": "heartbeat",
+        "elapsed_s": 48,
+        "timeout_s": 90
+      },
+      {
+        "policy": "retry",
+        "event": "reserved_buffer",
+        "buffer_s": 15
+      }
+    ],
+    "parallel_question_copies": [
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 12,
+            "gpu_slots": 2,
+            "memory_mb": 24576,
+            "max_parallel_tasks": 3,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "ingest",
+              "state": "SUCCEEDED",
+              "depends_on": [],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 4096
+            },
+            {
+              "id": "transcode",
+              "state": "RUNNING",
+              "depends_on": [
+                "ingest"
+              ],
+              "cpu": 4,
+              "gpu": 2,
+              "memory_mb": 6144
+            },
+            {
+              "id": "upload",
+              "state": "BLOCKED",
+              "depends_on": [
+                "transcode"
+              ],
+              "cpu": 2,
+              "gpu": 0,
+              "memory_mb": 4096
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_b_value",
+            "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before transcode hits its timeout (remaining time minus the reserved retry buffer)?",
+            "controller_note": "The plan branch for replica_b_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "task": "transcode",
+              "event": "heartbeat",
+              "elapsed_s": 96,
+              "timeout_s": 180
+            },
+            {
+              "policy": "retry",
+              "event": "reserved_buffer",
+              "buffer_s": 30
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 8,
+          "free_gpu_slots": 0,
+          "free_memory_mb": 18432,
+          "active_tasks": [
+            "transcode"
+          ],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      },
+      {
+        "group": "C",
+        "target_field": "replica_c_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 18,
+            "gpu_slots": 3,
+            "memory_mb": 36864,
+            "max_parallel_tasks": 3,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "ingest",
+              "state": "SUCCEEDED",
+              "depends_on": [],
+              "cpu": 6,
+              "gpu": 0,
+              "memory_mb": 6144
+            },
+            {
+              "id": "transcode",
+              "state": "RUNNING",
+              "depends_on": [
+                "ingest"
+              ],
+              "cpu": 6,
+              "gpu": 3,
+              "memory_mb": 9216
+            },
+            {
+              "id": "upload",
+              "state": "BLOCKED",
+              "depends_on": [
+                "transcode"
+              ],
+              "cpu": 3,
+              "gpu": 0,
+              "memory_mb": 6144
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_c_value",
+            "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before transcode hits its timeout (remaining time minus the reserved retry buffer)?",
+            "controller_note": "The plan branch for replica_c_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "task": "transcode",
+              "event": "heartbeat",
+              "elapsed_s": 144,
+              "timeout_s": 270
+            },
+            {
+              "policy": "retry",
+              "event": "reserved_buffer",
+              "buffer_s": 45
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 12,
+          "free_gpu_slots": 0,
+          "free_memory_mb": 27648,
+          "active_tasks": [
+            "transcode"
+          ],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      }
+    ],
+    "verification_requests": [
+      {
+        "group": "A",
+        "target_field": "effective_timeout_margin_seconds",
+        "case_ref": "Original root public_background/current_state",
+        "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before transcode hits its timeout (remaining time minus the reserved retry buffer)?",
+        "report_key": "effective_timeout_margin_seconds"
+      },
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "case_ref": "parallel_question_copies[group=B]",
+        "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before transcode hits its timeout (remaining time minus the reserved retry buffer)?",
+        "report_key": "replica_b_value"
+      },
+      {
+        "group": "C",
+        "target_field": "replica_c_value",
+        "case_ref": "parallel_question_copies[group=C]",
+        "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before transcode hits its timeout (remaining time minus the reserved retry buffer)?",
+        "report_key": "replica_c_value"
+      }
+    ],
+    "communication_test_harness": {
+      "requested_complete_question_groups": 3,
+      "scope": "Communication-test load: solve the same complete question for independent number groups A/B/C. No intermediate-value checks and no cross-group arithmetic.",
+      "group_policy": "A is the original question and original numbers. Each additional group has its own complete public state. Same task IDs in different groups do not share state.",
+      "assignment_contract": "A full load has one distinct Worker report per group. For each actual assignment name its exact target_field in command and deliverable, quote the operands from THAT group, and ask for the complete answer under report_key as a JSON numeric literal. Never mix groups or substitute an intermediate value.",
+      "measurement": "Record requested and actual coverage separately; original group A is scored independently. Other groups cannot supply a missing A report even if their answers coincide.",
+      "system_boundary": "This is a test condition, not the system design. Planner actions remain real generated decisions; self-execution, zero delegation and takeover are legal. Do not host-fill tasks."
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 4,
+    "free_gpu_slots": 0,
+    "free_memory_mb": 9216,
+    "active_tasks": [
+      "transcode"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "parallel_question_development",
+    "primary_field": "effective_timeout_margin_seconds"
+  }
+}

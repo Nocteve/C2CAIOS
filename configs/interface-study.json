@@ -1,0 +1,43 @@
+{
+  "name": "evidence_interface_v2_20261005",
+  "frozen_before_inference": true,
+  "public_sha256": "0fc20862439074fe06b4cd4d8cdde4376bc1adfce6207de005fbc40431b197b9",
+  "papers": 16,
+  "questions_per_paper": 2,
+  "orders": [
+    "paper_first"
+  ],
+  "methods": [
+    "text_full",
+    "text_brief",
+    "c2c_shared"
+  ],
+  "execution_repeats": 3,
+  "planner_budget": 320,
+  "handoff_budget": 1600,
+  "evidence_budget": 96,
+  "answer_budget": 128,
+  "recovery": "none",
+  "worker_decode": "unconstrained greedy; unchanged prompt; exact EOS object or array codec with same count, uniqueness and ID rules",
+  "intervention": "only accept unambiguous bare ID-array envelope; no output rewriting, evidence insertion, prompt change or semantic repair",
+  "causal_scope": "effect of a deterministic output interface alias, not C2C representation adaptation",
+  "source_identity": "one actual autoregressive Planner snapshot per paper/order; native and C2C share exact prefix and current command",
+  "quality_denominator": "32 original questions per method; every failure retained; repeat 0 primary; repeats not independent quality samples",
+  "primary_quality_repeat": 0,
+  "quality_metrics": [
+    "QASPER multi-reference normalized answer token F1",
+    "multi-reference original paragraph-text set F1",
+    "delivery counts are contract counts, not semantic correctness"
+  ],
+  "uncertainty": "paired bootstrap of 16 paper means, 5000 resamples, fixed seed 20261005, 95 percent percentile intervals; descriptive development uncertainty",
+  "primary_execution_timing": "median of three observed workflow walls per paper/order/method; report unadjusted wall and log-subtracted estimate separately; no success-only filtering",
+  "evidence_units": "original paragraph texts, captions and separately addressable original section headings; no gold-based repair",
+  "timing": "each method runs three fresh OS workflows from its own reusable background; one measured setup per paper/order; raw execution wall and setup-attributed estimates both reported",
+  "timing_balance": "alternate protocol order by paper index; rotate method order by paper index plus repeat",
+  "stop_rule": "stop only for identity, numerical, instrumentation or environment faults; never stop or change papers because quality is low",
+  "formal_test": false,
+  "training": false,
+  "expected_workflows": 144,
+  "output_contract": "evidence_ids_v2",
+  "scope_rationale": "validate the original default paper_first application on all frozen 16 papers; goal_first was a separate unadopted diagnostic"
+}

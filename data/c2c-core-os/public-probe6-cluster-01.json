@@ -1,0 +1,154 @@
+{
+ "id": "os-c2c-probe6-cluster-01",
+ "goal": "Bring the public runtime state to a publishable next step while preserving the audit trail. The controller is waiting on the four pending decision values; delegate one bounded verification task per value. Each delegated command must quote the exact operand values from its question so the Worker can compute the value from the command alone.",
+ "public_background": {
+  "runtime": {
+   "cpu_slots": 16,
+   "gpu_slots": 2,
+   "memory_mb": 32768,
+   "max_parallel_tasks": 4,
+   "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+  },
+  "tasks": [
+   {
+    "id": "vg1",
+    "state": "QUEUED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "estimated_duration_s": 30,
+    "purpose": "verify gauge total_peak_rss_mb"
+   },
+   {
+    "id": "vg2",
+    "state": "QUEUED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "estimated_duration_s": 30,
+    "purpose": "verify gauge total_pending_sectors"
+   },
+   {
+    "id": "vg3",
+    "state": "QUEUED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "estimated_duration_s": 30,
+    "purpose": "verify gauge sku7_net_stock"
+   },
+   {
+    "id": "vg4",
+    "state": "QUEUED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "estimated_duration_s": 30,
+    "purpose": "verify gauge total_crew_hours"
+   }
+  ],
+  "pending_decisions": [
+   {
+    "field": "total_peak_rss_mb",
+    "question": "The memory_accounting record shows service_peak_rss_mb in service order = [1024, 8200, 2048, 3960, 600]. What is the total peak RSS across all services (the sum of the listed peaks in MB)?",
+    "controller_note": "The daily report cannot print the memory footline without this total; it must be verified before publication."
+   },
+   {
+    "field": "total_pending_sectors",
+    "question": "The disk_scheduling record shows pending_request_sectors = [86, 240, 30, 199]. What is the total sector demand of the pending window (the sum of all listed pending sectors)?",
+    "controller_note": "The I/O backlog line of the report is blocked on this total; it must be verified before publication."
+   },
+   {
+    "field": "sku7_net_stock",
+    "question": "The inventory record shows SKU-7 warehouse_a inbound 240 outbound 85, warehouse_b inbound 160 outbound 122. What is the net on-hand stock across both warehouses (inbound minus outbound, combined)?",
+    "controller_note": "The replenishment line of the report is blocked on this number; it must be verified before publication."
+   },
+   {
+    "field": "total_crew_hours",
+    "question": "The roster_compliance record shows crew_week_hours in crew order = [32, 36, 45]. What is the total crew hours logged this week (the sum of the listed hours)?",
+    "controller_note": "The compliance line of the report is blocked on this total; it must be verified before publication."
+   }
+  ],
+  "events": [
+   {
+    "subsystem": "memory_accounting",
+    "memory_max_mb": 4096,
+    "service_peak_rss_mb": {
+     "svc1": 1024,
+     "svc2": 8200,
+     "svc3": 2048,
+     "svc4": 3960,
+     "svc5": 600
+    }
+   },
+   {
+    "subsystem": "disk_scheduling",
+    "algorithm": "SCAN",
+    "head_sector": 120,
+    "head_direction": "up",
+    "pending_request_sectors": [
+     86,
+     240,
+     30,
+     199
+    ]
+   },
+   {
+    "subsystem": "inventory",
+    "sku": "SKU-7",
+    "warehouse_a": {
+     "inbound": 240,
+     "outbound": 85
+    },
+    "warehouse_b": {
+     "inbound": 160,
+     "outbound": 122
+    }
+   },
+   {
+    "subsystem": "roster_compliance",
+    "legal_week_cap_hours": 40,
+    "crew_week_hours": {
+     "crew_alpha": 32,
+     "crew_bravo": 36,
+     "crew_charlie": 45
+    }
+   }
+  ]
+ },
+ "current_state": {
+  "free_cpu_slots": 14,
+  "free_gpu_slots": 2,
+  "free_memory_mb": 30720,
+  "active_tasks": [
+   "t1"
+  ],
+  "failed_tasks": [],
+  "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "multi_verification_mixed",
+  "intended_questions": [
+   "Total peak RSS across all services (sum, MB).",
+   "Total sector demand of the pending window (sum).",
+   "Net on-hand stock of SKU-7 across the two warehouses.",
+   "Total crew hours logged this week (sum)."
+  ],
+  "expected_answers": [
+   15832,
+   555,
+   193,
+   113
+  ],
+  "derivations": [
+   "1024 + 8200 + 2048 + 3960 + 600 = 15832.",
+   "86 + 240 + 30 + 199 = 555.",
+   "240 - 85 + 160 - 122 = 193.",
+   "32 + 36 + 45 = 113."
+  ]
+ }
+}

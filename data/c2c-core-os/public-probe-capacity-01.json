@@ -1,0 +1,37 @@
+{
+  "id": "os-c2c-probe-capacity-01",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 2,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {"id": "ingest", "state": "SUCCEEDED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+      {"id": "encode", "state": "RUNNING", "depends_on": ["ingest"], "cpu": 3, "gpu": 1, "memory_mb": 4096},
+      {"id": "rank", "state": "BLOCKED", "depends_on": ["encode"], "cpu": 2, "gpu": 1, "memory_mb": 4096},
+      {"id": "pack", "state": "READY", "depends_on": ["ingest"], "cpu": 2, "gpu": 0, "memory_mb": 2048}
+    ],
+    "events": [
+      {"task": "encode", "event": "started", "attempt": 1},
+      {"task": "rank", "event": "admission_deferred", "reason": "dependency encode is not terminal-success"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 3,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 6144,
+    "active_tasks": ["encode"],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. Bounded capacity arithmetic and dependency diagnosis are useful delegations right now; do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "resource_arithmetic",
+    "intended_question": "How many additional tasks, each requiring 2 cpu, 1 gpu and 4096 MB, can be admitted concurrently with the current free capacity?",
+    "expected_answer": 1,
+    "derivation": "min(floor(3/2), floor(1/1), floor(6144/4096)) = min(1, 1, 1) = 1"
+  }
+}

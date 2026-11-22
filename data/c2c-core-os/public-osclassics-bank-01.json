@@ -1,0 +1,50 @@
+{
+  "id": "os-c2c-osclassics-bank-01",
+  "goal": "Decide resource admission for the three processes by applying every rule below. Your action reason must state each decision together with the value that determines it, and you must delegate one bounded verification task per value. Every delegated task command must name the exact pending_decision field it verifies (for example: compute the value of safe_before_request) and require the Worker to return one JSON report object carrying that value. Rules: if the value of safe_before_request is 1, the plan is: keep the current allocations granted; otherwise: roll back one allocation to restore safety; if the value of p1_request_one_grant is 1, the plan is: grant P1's request for 1 additional unit; otherwise: refuse P1's request and put it on the wait queue. Preserve allocation bookkeeping and treat the banker's safety algorithm as the admission authority.",
+  "public_background": {
+    "runtime": {
+      "policy_context": "A single reusable resource class (for example memory units) is managed with Dijkstra's banker's algorithm: a state is safe when there exists an ordering of the remaining processes such that each process's remaining need can be covered by currently available units plus the units released by processes finished earlier. A request is granted only if the resulting state is still safe."
+    },
+    "resource": {
+      "total_units": 9,
+      "available_units": 2
+    },
+    "tasks": [
+      {"id": "P0", "allocated_units": 2, "maximum_units": 4},
+      {"id": "P1", "allocated_units": 3, "maximum_units": 6},
+      {"id": "P2", "allocated_units": 2, "maximum_units": 4}
+    ],
+    "pending_decisions": [
+      {
+        "field": "safe_before_request",
+        "question": "Before any new request, is the current state safe under the banker's algorithm? Answer 1 if a safe sequence exists, otherwise 0.",
+        "controller_note": "The plan branch for keeping current allocations depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "p1_request_one_grant",
+        "question": "P1 requests 1 additional unit (after the grant P1 would hold 4 and still need at most 2; available would drop to 1). Would the resulting state still be safe? Answer 1 if the request can be granted immediately, otherwise 0.",
+        "controller_note": "The plan branch for P1's request depends on this value; it must be verified before the controller executes the chosen plan."
+      }
+    ],
+    "events": [
+      {"event": "allocation_snapshot", "note": "total_units 9, available_units 2; process table above is current."},
+      {"event": "request_arrived", "process": "P1", "requested_units": 1}
+    ]
+  },
+  "current_state": {
+    "waiting_requests": [{"process": "P1", "requested_units": 1}],
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now."
+  },
+  "probe": {
+    "family": "os_classics_banker",
+    "intended_questions": [
+      "Is the current allocation state safe (banker's algorithm)?",
+      "Can P1's request for 1 additional unit be granted without leaving the safe set?"
+    ],
+    "expected_answers": [1, 0],
+    "derivations": [
+      "Before the request: available 2 covers P0's need (4-2=2); after P0 finishes available becomes 4, covering P2's need 2, then P1's need 3. Safe sequence P0, P2, P1 exists, so safe_before_request = 1.",
+      "After granting P1 one unit: available 1, needs are P0 2, P1 2, P2 2; no need fits in 1, so no safe sequence exists; the request must be refused, p1_request_one_grant = 0."
+    ]
+  }
+}

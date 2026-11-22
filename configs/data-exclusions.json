@@ -1,0 +1,536 @@
+{
+  "schema": "research_lineage_exclusions_v1",
+  "sources": [
+    {
+      "path": "data\\qasper-dev-six\\manifest.json",
+      "sha256": "acccaa7e573bad38b500d19036c8accd05b0d63f86c5a43f0032423c0637bebe"
+    },
+    {
+      "path": "data\\qasper-order-dev-16\\manifest.json",
+      "sha256": "45bb113cc13f8de2be2e282c1cccf4d4e38180b3c4a91547f0ce4cb723cdf29f"
+    },
+    {
+      "path": "data\\job-config-dev-eight\\manifest.json",
+      "sha256": "503440cd701d540c2b28d0b709f41b7721eea71a00e4e939b2e728895a41c90c"
+    },
+    {
+      "path": "data\\review-contract-dev-numpy\\source-lock.json",
+      "sha256": "3603794ad0face6f294c49eb21e954c2aaaaa0e8009328c555a0dc04737c4ce0"
+    },
+    {
+      "path": "data\\scipy-copy-review-dev\\manifest.json",
+      "sha256": "782f69a4a587c34885449243b0f78741c59a2eb7674264a7719b4c68a96610de"
+    },
+    {
+      "path": "data/arc-native-calibration/manifest.json",
+      "sha256": "c8fd440a5df9cf0ae00189fae73d2b51d205a2c89e577f5e36ac27bf6972150b"
+    },
+    {
+      "path": "data/handoff-candidates-v1/selection.json",
+      "sha256": "1c51b2f74f6e5d2c5d7d26d2d686a4d3f2dc194149e05b4882b8c3ffd1b9c2c8"
+    },
+    {
+      "path": "data/handoff-candidates-v2/selection.json",
+      "sha256": "eceb7c814ba6f2a8301d783335368430ef0918976326fe2336ef409b6a26d527"
+    },
+    {
+      "path": "data/decision-contract-dev-v1/manifest.json",
+      "sha256": "51093a55fb84ed57d832a5c1005f41c1e6025122efd7d59b70d07fcd3ccd6776",
+      "scope": "constructed offline contracts; all variants excluded from training and formal test"
+    },
+    {
+      "path": "data/decision-contract-dev-v2/manifest.json",
+      "sha256": "f9f8910e7056b21cde6921a2b33f0126604e7e11c4a5b4904e0c8f83b0d5aceb",
+      "scope": "constructed offline contracts; all variants excluded from training and formal test"
+    }
+  ],
+  "excluded_parent_ids": [
+    "arc_challenge_test__ACTAAP_2011_5_1",
+    "arc_challenge_test__ACTAAP_2012_7_9",
+    "arc_challenge_test__ACTAAP_2013_5_8",
+    "arc_challenge_test__ACTAAP_2014_7_5",
+    "arc_challenge_test__AKDE&ED_2008_4_25",
+    "arc_challenge_test__AKDE&ED_2008_8_36",
+    "arc_challenge_test__CSZ30338",
+    "arc_challenge_test__FCAT_2008_5_1",
+    "arc_challenge_test__MCAS_1998_4_23",
+    "arc_challenge_test__MCAS_2001_8_4",
+    "arc_challenge_test__MCAS_2004_8_23",
+    "arc_challenge_test__MCAS_2005_5_24",
+    "arc_challenge_test__MCAS_2005_9_17",
+    "arc_challenge_test__MCAS_2005_9_21",
+    "arc_challenge_test__MCAS_2010_8_12005",
+    "arc_challenge_test__MCAS_2012_5_23614",
+    "arc_challenge_test__MCAS_2014_5_7",
+    "arc_challenge_test__MCAS_2014_8_16",
+    "arc_challenge_test__MCAS_8_2014_8",
+    "arc_challenge_test__MDSA_2010_4_20",
+    "arc_challenge_test__MDSA_2010_5_29",
+    "arc_challenge_test__MEA_2016_5_4",
+    "arc_challenge_test__MEA_2016_8_12",
+    "arc_challenge_test__MSA_2012_5_12",
+    "arc_challenge_test__Mercury_177748",
+    "arc_challenge_test__Mercury_179025",
+    "arc_challenge_test__Mercury_180005",
+    "arc_challenge_test__Mercury_184100",
+    "arc_challenge_test__Mercury_184205",
+    "arc_challenge_test__Mercury_184363",
+    "arc_challenge_test__Mercury_184818",
+    "arc_challenge_test__Mercury_187198",
+    "arc_challenge_test__Mercury_400877",
+    "arc_challenge_test__Mercury_400880",
+    "arc_challenge_test__Mercury_401241",
+    "arc_challenge_test__Mercury_401312",
+    "arc_challenge_test__Mercury_401865",
+    "arc_challenge_test__Mercury_407125",
+    "arc_challenge_test__Mercury_407262",
+    "arc_challenge_test__Mercury_409295",
+    "arc_challenge_test__Mercury_409301",
+    "arc_challenge_test__Mercury_416376",
+    "arc_challenge_test__Mercury_416646",
+    "arc_challenge_test__Mercury_416683",
+    "arc_challenge_test__Mercury_417150",
+    "arc_challenge_test__Mercury_417593",
+    "arc_challenge_test__Mercury_7011323",
+    "arc_challenge_test__Mercury_7016800",
+    "arc_challenge_test__Mercury_7025008",
+    "arc_challenge_test__Mercury_7025060",
+    "arc_challenge_test__Mercury_7027160",
+    "arc_challenge_test__Mercury_7032515",
+    "arc_challenge_test__Mercury_7034808",
+    "arc_challenge_test__Mercury_7040985",
+    "arc_challenge_test__Mercury_7056525",
+    "arc_challenge_test__Mercury_7056858",
+    "arc_challenge_test__Mercury_7058135",
+    "arc_challenge_test__Mercury_7074848",
+    "arc_challenge_test__Mercury_7075023",
+    "arc_challenge_test__Mercury_7081725",
+    "arc_challenge_test__Mercury_7081743",
+    "arc_challenge_test__Mercury_7082845",
+    "arc_challenge_test__Mercury_7086520",
+    "arc_challenge_test__Mercury_7090790",
+    "arc_challenge_test__Mercury_7103600",
+    "arc_challenge_test__Mercury_7108868",
+    "arc_challenge_test__Mercury_7109463",
+    "arc_challenge_test__Mercury_7131530",
+    "arc_challenge_test__Mercury_7133945",
+    "arc_challenge_test__Mercury_7140333",
+    "arc_challenge_test__Mercury_7142800",
+    "arc_challenge_test__Mercury_7166425",
+    "arc_challenge_test__Mercury_7171570",
+    "arc_challenge_test__Mercury_7172270",
+    "arc_challenge_test__Mercury_7190120",
+    "arc_challenge_test__Mercury_7207550",
+    "arc_challenge_test__Mercury_7210123",
+    "arc_challenge_test__Mercury_7211033",
+    "arc_challenge_test__Mercury_7212328",
+    "arc_challenge_test__Mercury_7212888",
+    "arc_challenge_test__Mercury_7213430",
+    "arc_challenge_test__Mercury_7215828",
+    "arc_challenge_test__Mercury_7218015",
+    "arc_challenge_test__Mercury_7234605",
+    "arc_challenge_test__Mercury_7235638",
+    "arc_challenge_test__Mercury_7239383",
+    "arc_challenge_test__Mercury_7247065",
+    "arc_challenge_test__Mercury_7249708",
+    "arc_challenge_test__Mercury_7252088",
+    "arc_challenge_test__Mercury_7271670",
+    "arc_challenge_test__Mercury_7283430",
+    "arc_challenge_test__Mercury_LBS11022",
+    "arc_challenge_test__Mercury_SC_400594",
+    "arc_challenge_test__Mercury_SC_400697",
+    "arc_challenge_test__Mercury_SC_401168",
+    "arc_challenge_test__Mercury_SC_401185",
+    "arc_challenge_test__Mercury_SC_401265",
+    "arc_challenge_test__Mercury_SC_401375",
+    "arc_challenge_test__Mercury_SC_401666",
+    "arc_challenge_test__Mercury_SC_402029",
+    "arc_challenge_test__Mercury_SC_402171",
+    "arc_challenge_test__Mercury_SC_402612",
+    "arc_challenge_test__Mercury_SC_405501",
+    "arc_challenge_test__Mercury_SC_406835",
+    "arc_challenge_test__Mercury_SC_406855",
+    "arc_challenge_test__Mercury_SC_407070",
+    "arc_challenge_test__Mercury_SC_407302",
+    "arc_challenge_test__Mercury_SC_407610",
+    "arc_challenge_test__Mercury_SC_407689",
+    "arc_challenge_test__Mercury_SC_408384",
+    "arc_challenge_test__Mercury_SC_409383",
+    "arc_challenge_test__Mercury_SC_410905",
+    "arc_challenge_test__Mercury_SC_414041",
+    "arc_challenge_test__Mercury_SC_414339",
+    "arc_challenge_test__Mercury_SC_415422",
+    "arc_challenge_test__Mercury_SC_415457",
+    "arc_challenge_test__NAEP_2000_8_S11+10",
+    "arc_challenge_test__NAEP_2000_8_S11+11",
+    "arc_challenge_test__NYSEDREGENTS_2010_8_42",
+    "arc_challenge_test__NYSEDREGENTS_2012_4_1",
+    "arc_challenge_test__OHAT_2009_8_36",
+    "arc_challenge_test__TIMSS_2003_8_pg16",
+    "arc_challenge_test__TIMSS_2003_8_pg94",
+    "arc_challenge_test__TIMSS_2011_8_pg31",
+    "arc_challenge_test__VASoL_2009_3_2",
+    "arc_challenge_test__VASoL_2009_3_23",
+    "arc_challenge_test__VASoL_2009_5_30",
+    "arc_challenge_test__VASoL_2010_3_39",
+    "job-config:job01",
+    "job-config:job02",
+    "job-config:job03",
+    "job-config:job04",
+    "job-config:job05",
+    "job-config:job06",
+    "job-config:job07",
+    "job-config:job08",
+    "numpy2-release-contract-001",
+    "qasper:1602.03661",
+    "qasper:1607.01759",
+    "qasper:1610.00879",
+    "qasper:1612.09113",
+    "qasper:1703.05916",
+    "qasper:1704.00939",
+    "qasper:1705.08142",
+    "qasper:1706.07179",
+    "qasper:1707.08559",
+    "qasper:1809.08298",
+    "qasper:1901.03860",
+    "qasper:1904.03339",
+    "qasper:1904.08386",
+    "qasper:1904.09678",
+    "qasper:1909.11467",
+    "qasper:1909.11879",
+    "qasper:1910.04887",
+    "qasper:1911.08962",
+    "qasper:1911.13087",
+    "qasper:2002.06644",
+    "qasper:2003.09971",
+    "qasper:2004.03329",
+    "release-packet-001",
+    "scipy-copy-20172"
+  ],
+  "excluded_family_ids": [
+    "arc_challenge",
+    "authored-release-packet-20261006",
+    "job-config-engineering-v1",
+    "numpy-2-migration",
+    "qasper-paper:1602.03661",
+    "qasper-paper:1607.01759",
+    "qasper-paper:1610.00879",
+    "qasper-paper:1612.09113",
+    "qasper-paper:1703.05916",
+    "qasper-paper:1704.00939",
+    "qasper-paper:1705.08142",
+    "qasper-paper:1706.07179",
+    "qasper-paper:1707.08559",
+    "qasper-paper:1809.08298",
+    "qasper-paper:1901.03860",
+    "qasper-paper:1904.03339",
+    "qasper-paper:1904.08386",
+    "qasper-paper:1904.09678",
+    "qasper-paper:1909.11467",
+    "qasper-paper:1909.11879",
+    "qasper-paper:1910.04887",
+    "qasper-paper:1911.08962",
+    "qasper-paper:1911.13087",
+    "qasper-paper:2002.06644",
+    "qasper-paper:2003.09971",
+    "qasper-paper:2004.03329",
+    "scipy-pr-20172"
+  ],
+  "excluded_source_sha256": [
+    "0aecb8e083fe218386caf12ca9e94fa56623e51f063b097505e9032c706ed82b",
+    "0fc20862439074fe06b4cd4d8cdde4376bc1adfce6207de005fbc40431b197b9",
+    "12a5e7203961389c01fddaf0bafa27b6b7838cdb43668d722cca3efb774ea722",
+    "1de5655467f1911f669f0489f03aed9f7effdb421039a6cbba6110ba7c25b61b",
+    "201cd43f15650ca0e3c9e529b5989daac29cd5bf4d631e7ae99cd082ff960c10",
+    "2db71ba5e0d4db2c779404f37e0af55e29162167944a8c17665abfe90d9ee369",
+    "2de53ffbd578d68dc249d2a5e78418eb6d0db76ba2e64c1bedee5122c6a151e2",
+    "36558b15e72f3a3e8fe94ee689d460b6d7c202f8480b34df2a6af15ec3ce187f",
+    "3ad12211ff5bcd1f6ee7dfe74b45adbce83e3ea5f41c25f70f902e3cc7814b75",
+    "3b1a68262938d54b059922f6b22b177f6a1c2c84290a36a03160144fc6dc9dd5",
+    "4421d5bbd0793352eed8ee45c8999b2663baa5f3ac095c9a1547a2c4c43cbb98",
+    "5f023aaf05e397d2b8ab2d162c56c3b8e81341540243e6883cee7c13da773ab1",
+    "77adda4b84a20dce81a2b661de15fab46bc364d5ae4065be67caaa2d3be975d2",
+    "781a624dba42e3ff4efbba6891ec39f5f9ad6b36ce60dd527bfffb777d871b79",
+    "8f7dabe1d74b9cdd0a4699226b2956c0725c03be1e9c25140af31701d9a4b889",
+    "920f53ab76273831db9886569ba69389958dd21aff86364889203ca3f104b313",
+    "93e8e42d314e9520155de4463a3ddf2e868e5e1fb04aa255cb4a407ecf49f287",
+    "955a5ffa8095054f9301cade0ded79bdf6d9c29c5b7ef086ceeb74c3d72ef80b",
+    "a45879d1e67315ca69a80d9835ed238c322362d7b1cde815bdf53a8f60db7347",
+    "a5055ce02ca536b6809967888e4002942b1aeb93d17c9edaefca1b5df2427959",
+    "a734e9496995bd6ee2d0702452dd606b631b157b0acec46bc58cfe6873cb4027",
+    "ac1c89ace9bd3ac96a12836adfc68d9cb39b817770a1e6460f0c3de6832325bd",
+    "aef7484e38f05a68a9d7405f265ffca1bf50ff0e68aa77aaef4705fd8fb7e78e",
+    "af457a5236b82f68d018c340e11f40b9438d8b0eb46eb6f36b25a555f7b9f93b",
+    "ccf1e7cf30b15eb6c77627a31fcd7f3112fa2b43fce121b54be06aeac0cdea3f",
+    "d15ca2707d77feb93cd9244ccf4d7e01b2cef1406e88c39b767805831589ed57",
+    "d547dbaf2be379cfda7619f87fba7234f911618a5823e1dc498f7a5d3b1851f7",
+    "d6c8dc9715ad596498b0fcf0bb8113aa64190cfa44acc6fea85d6448cfe5ce66",
+    "e3907b3ab32cc4e0562dc4d74031895a19837440189b6e05afeeee9466952512",
+    "ea78071f65c378c32777caac6380e2f7d308ecc5bed7e2196f64b92a457ee953",
+    "f4440b4c6ee6805849a3eb8669027462672b3eaeb02e8ae40bc2ad48275b23f5",
+    "fdd355261d2004ada7da0e6e63a7e5c4f3210be8e87c449f9473aa23fe10afb5",
+    "ff9846bf715fb5a5bfb9f853597b574dfd7e68c9f52d6a928b73ac13c5f8a960"
+  ],
+  "family_policy": "All revisions, derived tasks and paraphrases inherit the original family; annotate all source families in a multi-source task. Parent/question-level random splitting is insufficient.",
+  "reserved_splits": [
+    "train",
+    "validation",
+    "formal_test"
+  ],
+  "label_policy": "No observed handoff or model answer becomes a verified training target automatically. Routing quality requires costed alternative actions, not self-reported confidence.",
+  "training_examples_prepared": 9,
+  "model_training_started": true,
+  "reserved_lineage_records": [
+    {
+      "id": "1901.04899",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1901.04899"
+      ],
+      "family_ids": [
+        "qasper-paper:1901.04899"
+      ],
+      "source_sha256": [
+        "c6d9c9f5352dc8f16ce1c162d5616f6734686167f7e5fc146fc3687624f3a706"
+      ]
+    },
+    {
+      "id": "2004.04315",
+      "split": "train",
+      "parent_ids": [
+        "qasper:2004.04315"
+      ],
+      "family_ids": [
+        "qasper-paper:2004.04315"
+      ],
+      "source_sha256": [
+        "e9e58c5a03eac4fe7c2a7c9feedad5bafb068a1fc1a940f37e9e8036702b8241"
+      ]
+    },
+    {
+      "id": "1909.11189",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1909.11189"
+      ],
+      "family_ids": [
+        "qasper-paper:1909.11189"
+      ],
+      "source_sha256": [
+        "4a64bb33093cb90bc3abd6c285d1d21401c36c2364e94dbe072ba091d8921797"
+      ]
+    },
+    {
+      "id": "1907.12108",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1907.12108"
+      ],
+      "family_ids": [
+        "qasper-paper:1907.12108"
+      ],
+      "source_sha256": [
+        "c7a0053ddc6a62bfd3e06ca2fec39e7647bc5cec2353338a5e4ad01c855661fb"
+      ]
+    },
+    {
+      "id": "2001.10179",
+      "split": "train",
+      "parent_ids": [
+        "qasper:2001.10179"
+      ],
+      "family_ids": [
+        "qasper-paper:2001.10179"
+      ],
+      "source_sha256": [
+        "3f3e730f4adbf5c81abb3f970101695d302b7c31d5d556540d53355ca2bd5241"
+      ]
+    },
+    {
+      "id": "1811.01088",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1811.01088"
+      ],
+      "family_ids": [
+        "qasper-paper:1811.01088"
+      ],
+      "source_sha256": [
+        "70ccdfc31775e4345ad3e153dcd152ed09b7e33b774f0bfac48cf82d120e1591"
+      ]
+    },
+    {
+      "id": "1911.03058",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1911.03058"
+      ],
+      "family_ids": [
+        "qasper-paper:1911.03058"
+      ],
+      "source_sha256": [
+        "aa074b8f72d73aa168f2fb79c5a51699265e3e133397346f29813c8ec3301d77"
+      ]
+    },
+    {
+      "id": "1811.00854",
+      "split": "train",
+      "parent_ids": [
+        "qasper:1811.00854"
+      ],
+      "family_ids": [
+        "qasper-paper:1811.00854"
+      ],
+      "source_sha256": [
+        "46b423aaf910ab27038da6205ff4825a337f0be69d52ea573eba5b2830103e2d"
+      ]
+    },
+    {
+      "id": "1908.06379",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1908.06379"
+      ],
+      "family_ids": [
+        "qasper-paper:1908.06379"
+      ],
+      "source_sha256": [
+        "953a1a32e1426b4588e695e997fef6844c5d8553c6b1c278e7fbc8357ff6a07a"
+      ]
+    },
+    {
+      "id": "1905.11037",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1905.11037"
+      ],
+      "family_ids": [
+        "qasper-paper:1905.11037"
+      ],
+      "source_sha256": [
+        "ddb54a25aaacfeb5e8401f2e70eccaee33d55431e498432a29f99faaf21c6ba5"
+      ]
+    },
+    {
+      "id": "1709.10217",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1709.10217"
+      ],
+      "family_ids": [
+        "qasper-paper:1709.10217"
+      ],
+      "source_sha256": [
+        "1f271c35544cb6c15d951e228e890ccb808ec6a5cb1f9a7e065bc1586d50911e"
+      ]
+    },
+    {
+      "id": "1804.00520",
+      "split": "validation",
+      "parent_ids": [
+        "qasper:1804.00520"
+      ],
+      "family_ids": [
+        "qasper-paper:1804.00520"
+      ],
+      "source_sha256": [
+        "0c36eb56f168f9cda115a22aca07b1a4f391eaf36a0344d42c3eab45ddd81359"
+      ]
+    },
+    {
+      "id": "quote-empty-safe",
+      "split": "train",
+      "parent_ids": [
+        "quote-empty-safe"
+      ],
+      "family_ids": [
+        "cpython-standard-library"
+      ],
+      "source_sha256": [
+        "f927227de5ba5b1b2bdd75e3d9c8cb72b602b3bba3cc8edbf8fb554de0dc1fd7"
+      ]
+    },
+    {
+      "id": "quote-spaces-apostrophe",
+      "split": "train",
+      "parent_ids": [
+        "quote-spaces-apostrophe"
+      ],
+      "family_ids": [
+        "cpython-standard-library"
+      ],
+      "source_sha256": [
+        "f927227de5ba5b1b2bdd75e3d9c8cb72b602b3bba3cc8edbf8fb554de0dc1fd7"
+      ]
+    },
+    {
+      "id": "dedent-common-blank",
+      "split": "train",
+      "parent_ids": [
+        "dedent-common-blank"
+      ],
+      "family_ids": [
+        "cpython-standard-library"
+      ],
+      "source_sha256": [
+        "62867e40cdea6669b361f72af4d7daf0359f207c92cbeddfc7c7506397c1f31c"
+      ]
+    },
+    {
+      "id": "dedent-mixed-zero",
+      "split": "train",
+      "parent_ids": [
+        "dedent-mixed-zero"
+      ],
+      "family_ids": [
+        "cpython-standard-library"
+      ],
+      "source_sha256": [
+        "62867e40cdea6669b361f72af4d7daf0359f207c92cbeddfc7c7506397c1f31c"
+      ]
+    },
+    {
+      "id": "package-canonicalize",
+      "split": "validation",
+      "parent_ids": [
+        "package-canonicalize"
+      ],
+      "family_ids": [
+        "pypa-packaging"
+      ],
+      "source_sha256": [
+        "a13742cd9994eeca5adfb0249d126408c478026eb1f48cb97afbf2fe9f28ecc6"
+      ]
+    },
+    {
+      "id": "package-normalized",
+      "split": "validation",
+      "parent_ids": [
+        "package-normalized"
+      ],
+      "family_ids": [
+        "pypa-packaging"
+      ],
+      "source_sha256": [
+        "a13742cd9994eeca5adfb0249d126408c478026eb1f48cb97afbf2fe9f28ecc6"
+      ]
+    }
+  ],
+  "training_runs": [
+    {
+      "path": "artifacts/fuser-pilot-20261005/v2/results.json",
+      "optimizer_steps": 9,
+      "parameters": 459200,
+      "promoted": false
+    }
+  ],
+  "supervision_preparations": [
+    {
+      "path": "data/executable-supervision-v1",
+      "parents": 6,
+      "probes": 12,
+      "training_started": false,
+      "scope": "Executable fixed-input evidence targets; independent preflight before any training decision"
+    }
+  ]
+}

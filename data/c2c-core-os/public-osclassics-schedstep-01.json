@@ -1,0 +1,62 @@
+{
+  "id": "os-c2c-osclassics-schedstep-01",
+  "goal": "Meter the already-decided dispatch schedule by applying every rule below. Your action reason must state the metering result together with the value that determines it, and you must delegate one bounded verification task per job completion value. Every delegated task command must name the exact pending_decision field it verifies (for example: compute the value of completion_j3_seconds) and require the Worker to return one JSON report object carrying that value. Rules: if the value of completion_j1_seconds fits within 5 seconds, the plan is: confirm the head of the dispatch metered on time; otherwise: flag the head job as straggler; if the value of completion_j2_seconds fits within 11 seconds, the plan is: confirm the tail of the dispatch metered on time; otherwise: flag the tail job as straggler. The dispatch order itself is already decided and published below; do not re-derive it, only meter it.",
+  "public_background": {
+    "runtime": {
+      "policy_context": "The dispatcher has already committed to the ascending-burst dispatch order below. Metering now verifies the schedule: each job starts when the previous job in the order finishes, or at its own arrival if that is later (single core, no preemption). completion_seconds of a job = its start_seconds + its burst_seconds."
+    },
+    "tasks": [
+      {"id": "J1", "arrival_seconds": 0, "burst_seconds": 4},
+      {"id": "J2", "arrival_seconds": 1, "burst_seconds": 3},
+      {"id": "J3", "arrival_seconds": 2, "burst_seconds": 1},
+      {"id": "J4", "arrival_seconds": 3, "burst_seconds": 2}
+    ],
+    "decided_dispatch_order": ["J1", "J3", "J4", "J2"],
+    "pending_decisions": [
+      {
+        "field": "completion_j1_seconds",
+        "question": "In the decided order J1 first on one core: J1 starts at its arrival 0 and bursts 4 seconds. What is completion_j1_seconds (start + burst)?",
+        "controller_note": "The metering branch for the head job depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "completion_j3_seconds",
+        "question": "In the decided order J1 then J3: J3 starts when J1 finishes (completion_j1_seconds) or at its arrival 2, whichever is later, and bursts 1 second. What is completion_j3_seconds?",
+        "controller_note": "Metering requires this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "completion_j4_seconds",
+        "question": "In the decided order J1, J3, then J4: J4 starts when J3 finishes (completion_j3_seconds) or at its arrival 3, whichever is later, and bursts 2 seconds. What is completion_j4_seconds?",
+        "controller_note": "Metering requires this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "completion_j2_seconds",
+        "question": "In the decided order J1, J3, J4, then J2: J2 starts when J4 finishes (completion_j4_seconds) or at its arrival 1, whichever is later, and bursts 3 seconds. What is completion_j2_seconds?",
+        "controller_note": "The metering branch for the tail job depends on this value; it must be verified before the controller executes the chosen plan."
+      }
+    ],
+    "events": [
+      {"event": "dispatch_committed", "order": ["J1", "J3", "J4", "J2"]},
+      {"event": "metering_request", "note": "controller needs every completion_seconds value before flagging any straggler"}
+    ]
+  },
+  "current_state": {
+    "dispatch_metering_pending": true,
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now."
+  },
+  "probe": {
+    "family": "os_classics_schedstep",
+    "intended_questions": [
+      "Completion time of J1 in the decided order.",
+      "Completion time of J3 in the decided order.",
+      "Completion time of J4 in the decided order.",
+      "Completion time of J2 in the decided order."
+    ],
+    "expected_answers": [4, 5, 7, 10],
+    "derivations": [
+      "J1: start max(0, arrival 0) = 0, completion 0 + 4 = 4.",
+      "J3: start max(4, arrival 2) = 4, completion 4 + 1 = 5.",
+      "J4: start max(5, arrival 3) = 5, completion 5 + 2 = 7.",
+      "J2: start max(7, arrival 1) = 7, completion 7 + 3 = 10."
+    ]
+  }
+}

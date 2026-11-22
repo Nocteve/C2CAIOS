@@ -1,0 +1,23 @@
+{
+  "id": "os-c2c-core-parallel-01",
+  "goal": "Before the next scheduling change, produce two independent read-only reports: a CPU profile summary and a memory profile summary. Each report covers only its own assignment and must preserve all dependencies and event evidence.",
+  "public_background": {
+    "runtime": {"cpu_slots": 6, "gpu_slots": 1, "memory_mb": 12288, "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."},
+    "tasks": [
+      {"id": "ingest", "state": "SUCCEEDED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+      {"id": "profile_cpu", "state": "READY", "depends_on": ["ingest"], "cpu": 2, "gpu": 0, "memory_mb": 3072},
+      {"id": "profile_mem", "state": "READY", "depends_on": ["ingest"], "cpu": 2, "gpu": 0, "memory_mb": 3072}
+    ],
+    "events": [
+      {"task": "ingest", "event": "succeeded", "attempt": 1, "elapsed_s": 88},
+      {"task": "profile_cpu", "event": "admission_ready", "reason": "dependency ingest is terminal-success and resources fit"},
+      {"task": "profile_mem", "event": "admission_ready", "reason": "dependency ingest is terminal-success and resources fit"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 6, "free_gpu_slots": 1, "free_memory_mb": 12288,
+    "active_tasks": [], "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. The Planner must decide the task split; no hidden answer or host-created second command is supplied."
+  }
+}

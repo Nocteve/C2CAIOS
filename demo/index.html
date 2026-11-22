@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C2C · 委派运行</title>
+<link rel="stylesheet" href="./app.css?v=system-20261022">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="./">C2C <span>/ Agent Runtime</span></a>
+  <nav class="tabs" aria-label="视图">
+    <button class="tab on" data-mode="run" type="button">委派运行</button>
+    <button class="tab" data-mode="arms" type="button">五方案对比</button>
+    <button class="tab" data-mode="os" type="button">OS 调度</button>
+    <button class="tab" data-mode="system" type="button">系统综合</button>
+  </nav>
+  <div class="language-switch" role="group" aria-label="Language" data-i18n-ignore><button type="button" data-language="zh" aria-pressed="true">中文</button><button type="button" data-language="en" aria-pressed="false">English</button></div>
+  <span class="date">2026 · 10 · 21</span>
+</header>
+
+<main>
+  <section class="intro">
+    <p class="eyebrow" id="eyebrow">REAL RUN · ACBI4-OSCLASSICS-FAULT-01</p>
+    <h1 id="title">一次真实的 C2C 委派</h1>
+    <p class="deck" id="deck"></p>
+    <div class="spotlight" id="spotlight"></div>
+  </section>
+
+  <section class="board">
+    <aside class="log-panel">
+      <div class="panel-head"><span>RUN LOG</span><span><b id="runState">READY</b></span></div>
+      <ol class="log" id="log"></ol>
+      <dl class="metrics" id="metrics"></dl>
+    </aside>
+
+    <div class="canvas">
+      <div class="flow" id="runView">
+        <article class="node planner" data-step="1" id="plannerNode">
+          <div class="node-head">
+            <span class="avatar">P</span><b>Planner</b><span class="kind">Qwen3-4B</span>
+            <span class="status" id="plannerStatus">READY</span>
+          </div>
+          <div class="note" id="plannerNote"></div>
+          <div class="agents" id="agents"></div>
+          <div class="action" id="plannerAction"></div>
+          <div class="meta" id="plannerMeta"></div>
+        </article>
+
+        <div class="connector" data-step="2"><span>delegate · 2 tasks</span></div>
+        <div class="task-row" data-step="2" id="taskRow"></div>
+
+        <div class="connector" data-step="3"><span>1 次融合 · 共享给 2 个 Worker</span></div>
+        <article class="node fuser" data-step="3" id="fuserNode">
+          <div class="fuser-top"><b>C2C fuser</b><span>projection → receiver prefix</span></div>
+          <div class="tokens" id="tokens"></div>
+          <div class="fuser-meta" id="fuserMeta"></div>
+          <div class="fuser-share" id="fuserShare"></div>
+        </article>
+
+        <div class="connector" data-step="3"><span>同一份共享前缀 · 2 条私有分支</span></div>
+        <div class="workers" id="workers"></div>
+
+        <div class="connector" data-step="6"><span>public-state gate</span></div>
+        <article class="node gate" data-step="6" id="gateNode">
+          <div class="gate-head"><b>Public-state gate</b><span id="gateStatus">PENDING</span></div>
+          <div class="verdicts" id="verdicts"></div>
+          <div class="gate-sum" id="gateSum"></div>
+        </article>
+      </div>
+
+      <div class="os-demo" id="osView" hidden></div>
+      <div class="system-demo" id="systemView" hidden></div>
+      <div class="arms" id="armsView" hidden>
+        <div class="arms-head">
+          <div class="run-tabs" id="probeTabs"></div>
+          <div class="arms-meta" id="armsMeta"></div>
+        </div>
+        <div class="arms-setup" id="armsSetup"></div>
+        <div class="lane-head"><span>方案 / 可见输入</span><span>输出</span><span>KV</span><span>Decode</span><span>判定</span></div>
+        <div class="lanes" id="lanes"></div>
+        <div class="arms-sum" id="armsSum"></div>
+        <p class="arms-note">c2c 隐藏方案只读短命令；语义由融合 KV 送达。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <button class="btn primary" id="play" type="button">播放</button>
+    <button class="btn" id="prev" type="button" aria-label="上一步">←</button>
+    <button class="btn" id="next" type="button" aria-label="下一步">→</button>
+    <div class="steps" id="steps"></div>
+    <span class="counter" id="counter"></span>
+  </div>
+</main>
+
+<footer>
+  <span>真实 GPU 运行 · acbi4 · 2026-10-20</span>
+  <span>Qwen3-4B → Qwen3-0.6B · frozen fuser</span>
+</footer>
+
+<script src="./i18n.js?v=system-20261022"></script>
+<script src="./app.js?v=system-20261022"></script>
+</body>
+</html>

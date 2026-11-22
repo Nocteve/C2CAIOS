@@ -1,0 +1,57 @@
+{
+  "id": "os-c2c-probe3-latest-start-02",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "ledger",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096,
+        "remaining_work_s": 190,
+        "hard_deadline_s": 580
+      }
+    ],
+    "pending_decision": {
+      "field": "start_slack_seconds",
+      "question": "The wall clock is at 220s and ledger still needs 190s of work before its hard deadline at 580s. How many seconds of slack remain before ledger must start?",
+      "controller_note": "The deadline monitor is blocked until this slack is verified."
+    },
+    "events": [
+      {
+        "clock": "runtime",
+        "event": "sync",
+        "now_s": 220
+      },
+      {
+        "task": "ledger",
+        "event": "deadline_set",
+        "hard_deadline_s": 580,
+        "remaining_work_s": 190
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 6,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 12288,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Seconds of slack before ledger must start (deadline - now - remaining work).",
+    "expected_answer": 170,
+    "derivation": "580 - 220 - 190 = 170."
+  }
+}

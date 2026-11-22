@@ -1,0 +1,54 @@
+{
+ "id": "os-c2c-chain3-01",
+ "goal": "Delegate the four pending verifications as a strict chain of four tasks in which each task cross-checks the previous task's reported value against the raw public evidence before reporting its own value, so each task genuinely needs its predecessor's deliverable: the first delegated task is t1 (verify omega_wait_seconds), the second is t2 with depends_on [\"t1\"] (verify pool_remaining_memory_mb and state whether t1's reported omega_wait is consistent with the raw evidence), the third is t3 with depends_on [\"t2\"] (verify gpu_waves_required and state whether t2's reported pool value is consistent), the fourth is t4 with depends_on [\"t3\"] (verify effective_timeout_margin_seconds and state whether t3's reported wave count is consistent). The runtime refuses to start any task until every task in its depends_on is terminal-success, so omitting the dependency edges is not allowed. Choose the next scheduling plan by applying every rule below. Your action reason must state each chosen plan together with the value that determines it. Rules: if the value of omega_wait_seconds exceeds 240 s, the plan is: preempt qw3 and start omega_preview early; otherwise: notify the submitter of the wait; if the value of pool_remaining_memory_mb stays at or above 8192 MB after admitting all three READY pool jobs, the plan is: admit all three pool jobs; otherwise: defer the smallest pool job; if the value of gpu_waves_required stays at or below 4, the plan is: run the GPU batch in place; otherwise: split the GPU batch into two waves; if the value of effective_timeout_margin_seconds stays at or above 30 s, the plan is: let t1 keep running; otherwise: restart t1 now. Preserve dependencies, resource limits and failure evidence.",
+ "public_background": {
+  "runtime": {
+   "cpu_slots": 16,
+   "gpu_slots": 2,
+   "memory_mb": 32768,
+   "max_parallel_tasks": 4,
+   "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+  },
+  "tasks": [
+   {"id": "qw1", "state": "QUEUED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 1024, "estimated_duration_s": 110},
+   {"id": "qw2", "state": "QUEUED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 1024, "estimated_duration_s": 95},
+   {"id": "qw3", "state": "QUEUED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 1024, "estimated_duration_s": 125},
+   {"id": "omega_preview", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 0, "memory_mb": 1024},
+   {"id": "m1", "state": "READY", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 3072},
+   {"id": "m2", "state": "READY", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 4096},
+   {"id": "m3", "state": "READY", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+   {"id": "g1", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 1, "memory_mb": 1024},
+   {"id": "g2", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 1, "memory_mb": 1024},
+   {"id": "g3", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 1, "memory_mb": 1024},
+   {"id": "g4", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 1, "memory_mb": 1024},
+   {"id": "g5", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 1, "memory_mb": 1024},
+   {"id": "g6", "state": "READY", "depends_on": [], "cpu": 1, "gpu": 1, "memory_mb": 1024},
+   {"id": "t1", "state": "RUNNING", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048}
+  ],
+  "pending_decisions": [
+   {"field": "omega_wait_seconds", "question": "The runtime admits QUEUED jobs strictly in order ahead of omega_preview. How many seconds must omega_preview wait before it can start (sum of estimated durations of all jobs ahead of it)?", "controller_note": "The plan branch for submitter notification for omega_preview depends on this value; it must be verified before the controller executes the chosen plan."},
+   {"field": "pool_remaining_memory_mb", "question": "If every READY job in the pool is admitted, what will the remaining free_memory_mb of the 32768 MB pool be?", "controller_note": "The plan branch for pool admission depends on this value; it must be verified before the controller executes the chosen plan."},
+   {"field": "gpu_waves_required", "question": "With 2 GPU slots, how many sequential waves are required to run all six READY GPU jobs (ceiling of GPU demand divided by GPU slots)?", "controller_note": "The plan branch for GPU batch placement depends on this value; it must be verified before the controller executes the chosen plan."},
+   {"field": "effective_timeout_margin_seconds", "question": "According to the monitoring policy, the effective timeout margin of t1 is its remaining time minus the reserved retry buffer. What is the margin in seconds?", "controller_note": "The plan branch for t1 depends on this value; it must be verified before the controller executes the chosen plan."}
+  ],
+  "events": [
+   {"task_id": "t1", "type": "status", "message": "t1 is running; 62 s of its 140 s timeout remain; the runtime reserves an 18 s retry buffer."},
+   {"task_id": "g1", "type": "status", "message": "g1 is READY and requests 1 GPU slot."},
+   {"task_id": "pool", "type": "status", "message": "The memory pool totals 32768 MB; READY pool jobs are m1, m2, m3, g1, g2, g3, g4, g5, g6."}
+  ]
+ },
+ "current_state": {
+  "free_cpu_slots": 4,
+  "free_gpu_slots": 0,
+  "free_memory_mb": 4096,
+  "active_tasks": ["t1"],
+  "failed_tasks": [],
+  "observation_boundary": "public_state"
+ },
+ "probe": {
+  "family": "multi_verification_chain",
+  "intended_questions": ["omega_wait_seconds", "pool_remaining_memory_mb", "gpu_waves_required", "effective_timeout_margin_seconds"],
+  "expected_answers": [330, 23552, 3, 44],
+  "derivations": ["qw1 110 + qw2 95 + qw3 125 = 330.", "pool 32768 - (m1 3072 + m2 4096 + m3 2048) = 23552 for the memory pool jobs.", "GPU demand 1 x 6 = 6; 6 / 2 = 3 waves.", "t1 remaining 62 - 18 = 44."]
+ }
+}

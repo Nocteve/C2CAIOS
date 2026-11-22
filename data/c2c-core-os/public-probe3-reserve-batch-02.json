@@ -1,0 +1,85 @@
+{
+  "id": "os-c2c-probe3-reserve-batch-02",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 10,
+      "gpu_slots": 1,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "janitor",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "rollup",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "merge",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "vault",
+        "state": "BLOCKED",
+        "depends_on": [
+          "rollup"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_reserve",
+      "question": "After setting aside the failover memory reservation and admitting every READY batch job, what will the remaining free_memory_mb be?",
+      "controller_note": "The capacity planner is blocked until this value is verified."
+    },
+    "events": [
+      {
+        "policy": "failover",
+        "event": "reservation",
+        "memory_mb": 2048
+      },
+      {
+        "task": "rollup",
+        "event": "admission_ready"
+      },
+      {
+        "task": "merge",
+        "event": "admission_ready"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 22528,
+    "active_tasks": [
+      "janitor"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after the failover reservation and admitting every READY job.",
+    "expected_answer": 13312,
+    "derivation": "22528 - 2048 (reserve) - 4096 (rollup) - 3072 (merge) = 13312."
+  }
+}

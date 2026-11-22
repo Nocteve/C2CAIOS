@@ -1,0 +1,88 @@
+{
+  "id": "os-c2c-extension30r3-stage-handoff-01",
+  "goal": "Choose the original scheduling plan and verify each field in public_background.pending_decisions with one bounded Worker task. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 10,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "stageA",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "stageB",
+        "state": "READY",
+        "depends_on": [
+          "stageA"
+        ],
+        "cpu": 3,
+        "gpu": 1,
+        "memory_mb": 4096
+      },
+      {
+        "id": "stageC",
+        "state": "BLOCKED",
+        "depends_on": [
+          "stageB"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      }
+    ],
+    "events": [
+      {
+        "task": "stageA",
+        "event": "progress",
+        "percent": 91
+      },
+      {
+        "task": "stageB",
+        "event": "admission_ready",
+        "reason": "will be terminal-success once stageA completes"
+      }
+    ],
+    "pending_decisions": [
+      {
+        "field": "remaining_memory_after_handoff",
+        "question": "When stageA completes and releases its resources, and stageB is then admitted, what will the remaining free_memory_mb be?",
+        "controller_note": "The plan branch for remaining_memory_after_handoff depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "free_memory_after_release_mb",
+        "question": "Compute free_memory_mb after the currently RUNNING predecessor finishes and releases its memory, before admitting its successor."
+      }
+    ],
+    "communication_test_contract": {
+      "purpose": "Independent verification of values in the same original reasoning chain; calls do not consume each other as DAG artifacts; not autonomous delegation performance.",
+      "instructions": "Compute the original scheduling decision and its relevant intermediate checks. Delegate one useful verification task for each requested field. Every command and deliverable must include the exact field name. Include the public operands and arithmetic to verify. Ask each Worker to return {\"action\":\"report\",\"report\":{\"EXACT_FIELD_NAME\":NUMBER}} for its own field only. Do not substitute a different field or silently omit a check. Worker must check the arithmetic rather than merely affirm the proposed value.",
+      "required_fields": [
+        "remaining_memory_after_handoff",
+        "free_memory_after_release_mb"
+      ]
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 13312,
+    "active_tasks": [
+      "stageA"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller needs the original scheduling decision and its intermediate verification values named in pending_decisions, each verified by its own bounded task. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "communication_extension",
+    "primary_field": "remaining_memory_after_handoff"
+  }
+}

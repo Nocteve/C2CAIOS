@@ -1,0 +1,37 @@
+{
+  "id": "os-c2c-probe-deadline-01",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 6,
+      "gpu_slots": 1,
+      "memory_mb": 12288,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {"id": "ingest", "state": "SUCCEEDED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+      {"id": "encode", "state": "RUNNING", "depends_on": ["ingest"], "cpu": 2, "gpu": 1, "memory_mb": 3072},
+      {"id": "rank", "state": "BLOCKED", "depends_on": ["encode"], "cpu": 2, "gpu": 0, "memory_mb": 2048}
+    ],
+    "events": [
+      {"task": "encode", "event": "started", "attempt": 1},
+      {"task": "encode", "event": "heartbeat_late", "elapsed_s": 73, "timeout_s": 90},
+      {"task": "rank", "event": "admission_deferred", "reason": "dependency encode is not terminal-success"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 2,
+    "free_gpu_slots": 0,
+    "free_memory_mb": 4096,
+    "active_tasks": ["encode"],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. Bounded deadline arithmetic and dependency diagnosis are useful delegations right now; do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "resource_arithmetic",
+    "intended_question": "According to the late heartbeat event, how many seconds remain before encode hits its timeout?",
+    "expected_answer": 17,
+    "derivation": "timeout_s 90 - elapsed_s 73 = 17"
+  }
+}

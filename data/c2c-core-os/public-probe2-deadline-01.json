@@ -1,0 +1,42 @@
+{
+  "id": "os-c2c-probe2-deadline-01",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 6,
+      "gpu_slots": 1,
+      "memory_mb": 12288,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {"id": "ingest", "state": "SUCCEEDED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+      {"id": "compress", "state": "RUNNING", "depends_on": ["ingest"], "cpu": 2, "gpu": 1, "memory_mb": 3072},
+      {"id": "upload", "state": "BLOCKED", "depends_on": ["compress"], "cpu": 1, "gpu": 0, "memory_mb": 2048}
+    ],
+    "pending_decision": {
+      "field": "timeout_remaining_seconds",
+      "question": "According to the most recent heartbeat event, how many seconds remain before compress hits its timeout?",
+      "controller_note": "The watchdog is blocked until this remaining time is verified."
+    },
+    "events": [
+      {"task": "compress", "event": "started", "attempt": 1},
+      {"task": "compress", "event": "heartbeat", "elapsed_s": 67, "timeout_s": 80},
+      {"task": "upload", "event": "admission_deferred", "reason": "dependency compress is not terminal-success"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 2,
+    "free_gpu_slots": 0,
+    "free_memory_mb": 4096,
+    "active_tasks": ["compress"],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The watchdog is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "resource_arithmetic",
+    "intended_question": "Seconds remaining before compress timeout (timeout_s - elapsed_s).",
+    "expected_answer": 13,
+    "derivation": "80 - 67 = 13."
+  }
+}

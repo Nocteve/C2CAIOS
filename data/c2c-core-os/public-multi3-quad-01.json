@@ -1,0 +1,179 @@
+{
+  "id": "os-c2c-multi3-quad-01",
+  "goal": "Choose the next scheduling plan by applying every rule below. Your action reason must state each chosen plan together with the value that determines it, and you must delegate one bounded verification task per value. Rules: if the value of kappa_wait_seconds exceeds 240 s, the plan is: preempt qk3 and start kappa_preview early; otherwise: notify the submitter of the wait; if the value of pool_remaining_memory_mb stays at or above 12288 MB after admitting all three READY pool jobs, the plan is: admit all three pool jobs; otherwise: defer the smallest pool job; if the value of effective_timeout_margin_seconds stays at or above 30 s, the plan is: let t1 keep running; otherwise: restart t1 now; if the value of initial_transfer_seconds fits within 90 s, the plan is: start the pipeline now; otherwise: delay the pipeline start. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 16,
+      "gpu_slots": 2,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "qk1",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 100
+      },
+      {
+        "id": "qk2",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 80
+      },
+      {
+        "id": "qk3",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 120
+      },
+      {
+        "id": "kappa_preview",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      },
+      {
+        "id": "m1",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "m2",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "m3",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "t1",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decisions": [
+      {
+        "field": "kappa_wait_seconds",
+        "question": "The runtime admits QUEUED jobs strictly in order ahead of kappa_preview. How many seconds must kappa_preview wait before it can start (sum of estimated durations of all jobs ahead of it)?",
+        "controller_note": "The plan branch for submitter notification for kappa_preview depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "pool_remaining_memory_mb",
+        "question": "If every READY job in the pool is admitted, what will the remaining free_memory_mb of the 24576 MB pool be?",
+        "controller_note": "The plan branch for pool admission depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "effective_timeout_margin_seconds",
+        "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before t1 hits its timeout (remaining time minus the reserved retry buffer)?",
+        "controller_note": "The plan branch for watchdog policy for t1 depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "initial_transfer_seconds",
+        "question": "How many seconds will the initial dataset transfer take in total (dataset size divided by link throughput, plus the fixed handshake overhead)?",
+        "controller_note": "The plan branch for pipeline start timing depends on this value; it must be verified before the controller executes the chosen plan."
+      }
+    ],
+    "events": [
+      {
+        "queue": "kappa",
+        "event": "order",
+        "ahead_of_kappa_preview": [
+          "qk1",
+          "qk2",
+          "qk3"
+        ]
+      },
+      {
+        "task": "m1",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "m2",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "m3",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "t1",
+        "event": "heartbeat",
+        "elapsed_s": 55,
+        "timeout_s": 120
+      },
+      {
+        "policy": "retry",
+        "event": "reserved_buffer",
+        "buffer_s": 20
+      },
+      {
+        "link": "primary",
+        "event": "profile",
+        "dataset_mb": 3600,
+        "throughput_mb_s": 50,
+        "handshake_overhead_s": 30
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 14,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 30720,
+    "active_tasks": [
+      "t1"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "multi_verification_conditional",
+    "intended_questions": [
+      "Seconds kappa_preview must wait: sum of estimated durations of queued jobs ahead of it.",
+      "Remaining pool free_memory_mb after admitting every READY pool job.",
+      "Effective timeout margin for t1.",
+      "Total initial transfer seconds."
+    ],
+    "expected_answers": [
+      300,
+      15360,
+      45,
+      102
+    ],
+    "derivations": [
+      "qk1 100 + qk2 80 + qk3 120 = 300.",
+      "pool 24576 - (m1 3072 + m2 4096 + m3 2048) = 15360.",
+      "120 - 55 - 20 = 45.",
+      "3600 / 50 = 72; 72 + 30 = 102."
+    ]
+  }
+}

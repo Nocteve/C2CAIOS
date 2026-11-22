@@ -1,0 +1,327 @@
+{
+  "id": "os-c2c-multi3-octo-01",
+  "goal": "Choose the next scheduling plan by applying every rule below. Your action reason must state each chosen plan together with the value that determines it, and you must delegate one bounded verification task per value. Rules: if the value of alpha_wait_seconds exceeds 300 s, the plan is: preempt qa3 and start alpha_preview early; otherwise: notify the submitter of the wait; if the value of beta_wait_seconds exceeds 150 s, the plan is: preempt qb1 and start beta_preview early; otherwise: notify the submitter of the wait; if the value of pool_remaining_memory_mb stays at or above 20480 MB after admitting all three READY pool jobs, the plan is: admit all three pool jobs; otherwise: defer the smallest pool job; if the value of gpu_waves_required is at most 2, the plan is: reserve a single-wave GPU plan; otherwise: reserve a multi-wave GPU plan; if the value of effective_timeout_margin_seconds stays at or above 30 s, the plan is: let t1 keep running; otherwise: restart t1 now; if the value of worst_case_backlog_seconds exceeds 300 s, the plan is: escalate r1 to the incident team; otherwise: let the remaining retries finish; if the value of initial_transfer_seconds fits within 600 s, the plan is: start the pipeline now; otherwise: delay the pipeline start; if the value of start_slack_seconds is at least 120 s, the plan is: admit d1 this cycle; otherwise: defer d1 to the next cycle. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 32,
+      "gpu_slots": 4,
+      "memory_mb": 65536,
+      "max_parallel_tasks": 8,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "qa1",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 120
+      },
+      {
+        "id": "qa2",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 90
+      },
+      {
+        "id": "qa3",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 150
+      },
+      {
+        "id": "alpha_preview",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      },
+      {
+        "id": "qb1",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 60
+      },
+      {
+        "id": "qb2",
+        "state": "QUEUED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "estimated_duration_s": 75
+      },
+      {
+        "id": "beta_preview",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024
+      },
+      {
+        "id": "m1",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "m2",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "m3",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "g1",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 1,
+        "memory_mb": 1024
+      },
+      {
+        "id": "g2",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 2,
+        "memory_mb": 1024
+      },
+      {
+        "id": "g3",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 1,
+        "memory_mb": 1024
+      },
+      {
+        "id": "g4",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 2,
+        "memory_mb": 1024
+      },
+      {
+        "id": "t1",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "r1",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "attempt": 1,
+        "max_retries": 5,
+        "backoff_s": 40
+      },
+      {
+        "id": "d1",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048,
+        "remaining_work_s": 180,
+        "hard_deadline_s": 520
+      }
+    ],
+    "pending_decisions": [
+      {
+        "field": "alpha_wait_seconds",
+        "question": "The runtime admits QUEUED jobs strictly in order ahead of alpha_preview. How many seconds must alpha_preview wait before it can start (sum of estimated durations of all jobs ahead of it)?",
+        "controller_note": "The plan branch for submitter notification for alpha_preview depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "beta_wait_seconds",
+        "question": "The runtime admits QUEUED jobs strictly in order ahead of beta_preview. How many seconds must beta_preview wait before it can start (sum of estimated durations of all jobs ahead of it)?",
+        "controller_note": "The plan branch for submitter notification for beta_preview depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "pool_remaining_memory_mb",
+        "question": "If every READY job in the pool is admitted, what will the remaining free_memory_mb of the 32768 MB pool be?",
+        "controller_note": "The plan branch for pool admission depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "gpu_waves_required",
+        "question": "GPU jobs run one wave at a time, packing each wave into the 2 gpu_slots. How many waves are required to finish all queued GPU jobs?",
+        "controller_note": "The plan branch for GPU batch reservation depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "effective_timeout_margin_seconds",
+        "question": "According to the most recent heartbeat and the retry policy, how many seconds of effective margin remain before t1 hits its timeout (remaining time minus the reserved retry buffer)?",
+        "controller_note": "The plan branch for watchdog policy for t1 depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "worst_case_backlog_seconds",
+        "question": "If r1 keeps failing and consumes all remaining retries, how many additional seconds of backoff waiting should the controller budget (remaining retries times backoff_s)?",
+        "controller_note": "The plan branch for incident escalation for r1 depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "initial_transfer_seconds",
+        "question": "How many seconds will the initial dataset transfer take in total (dataset size divided by link throughput, plus the fixed handshake overhead)?",
+        "controller_note": "The plan branch for pipeline start timing depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "start_slack_seconds",
+        "question": "The wall clock is at 200s and d1 still needs 180s of work before its hard deadline at 520s. How many seconds of slack remain before d1 must start?",
+        "controller_note": "The plan branch for deadline admission for d1 depends on this value; it must be verified before the controller executes the chosen plan."
+      }
+    ],
+    "events": [
+      {
+        "queue": "alpha",
+        "event": "order",
+        "ahead_of_alpha_preview": [
+          "qa1",
+          "qa2",
+          "qa3"
+        ]
+      },
+      {
+        "queue": "beta",
+        "event": "order",
+        "ahead_of_beta_preview": [
+          "qb1",
+          "qb2"
+        ]
+      },
+      {
+        "task": "m1",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "m2",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "task": "m3",
+        "event": "admission_ready",
+        "reason": "dependencies are terminal-success"
+      },
+      {
+        "queue": "gpu",
+        "event": "backlog",
+        "jobs": [
+          "g1",
+          "g2",
+          "g3",
+          "g4"
+        ],
+        "gpu_slots_per_wave": 2
+      },
+      {
+        "task": "t1",
+        "event": "heartbeat",
+        "elapsed_s": 48,
+        "timeout_s": 90
+      },
+      {
+        "policy": "retry",
+        "event": "reserved_buffer",
+        "buffer_s": 15
+      },
+      {
+        "task": "r1",
+        "event": "retry_scheduled",
+        "attempt": 1,
+        "backoff_s": 40
+      },
+      {
+        "link": "primary",
+        "event": "profile",
+        "dataset_mb": 4800,
+        "throughput_mb_s": 60,
+        "handshake_overhead_s": 25
+      },
+      {
+        "clock": "runtime",
+        "event": "sync",
+        "now_s": 200
+      },
+      {
+        "task": "d1",
+        "event": "deadline_set",
+        "hard_deadline_s": 520,
+        "remaining_work_s": 180
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 29,
+    "free_gpu_slots": 4,
+    "free_memory_mb": 62464,
+    "active_tasks": [
+      "t1",
+      "r1"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected values are supplied. The controller is waiting on the pending decision values; bounded independent verifications of them are the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "multi_verification_conditional",
+    "intended_questions": [
+      "Seconds alpha_preview must wait: sum of estimated durations of queued jobs ahead of it.",
+      "Seconds beta_preview must wait: sum of estimated durations of queued jobs ahead of it.",
+      "Remaining pool free_memory_mb after admitting every READY pool job.",
+      "Waves required to drain the queued GPU jobs.",
+      "Effective timeout margin for t1.",
+      "Worst-case additional backoff seconds.",
+      "Total initial transfer seconds.",
+      "Seconds of slack before d1 must start."
+    ],
+    "expected_answers": [
+      360,
+      135,
+      23552,
+      3,
+      27,
+      160,
+      105,
+      140
+    ],
+    "derivations": [
+      "qa1 120 + qa2 90 + qa3 150 = 360.",
+      "qb1 60 + qb2 75 = 135.",
+      "pool 32768 - (m1 3072 + m2 4096 + m3 2048) = 23552.",
+      "GPU demand 1 + 2 + 1 + 2 = 6; 6 / 2 = 3 waves.",
+      "90 - 48 - 15 = 27.",
+      "(5 - 1) x 40 = 160.",
+      "4800 / 60 = 80; 80 + 25 = 105.",
+      "520 - 200 - 180 = 140."
+    ]
+  }
+}

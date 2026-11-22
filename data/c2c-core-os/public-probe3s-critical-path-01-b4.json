@@ -1,0 +1,837 @@
+{
+  "id": "os-c2c-probe3-critical-path-01",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "ingest",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 20
+      },
+      {
+        "id": "compress",
+        "state": "READY",
+        "depends_on": [
+          "ingest"
+        ],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048,
+        "duration_s": 35
+      },
+      {
+        "id": "upload",
+        "state": "BLOCKED",
+        "depends_on": [
+          "compress"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 15
+      },
+      {
+        "id": "fetch",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 40
+      },
+      {
+        "id": "parse",
+        "state": "READY",
+        "depends_on": [
+          "fetch"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 10
+      }
+    ],
+    "pending_decision": {
+      "field": "critical_path_seconds",
+      "question": "What is the total duration in seconds of the longest dependency chain that ends at a non-success task?",
+      "controller_note": "The resource planner is blocked until the critical path is verified."
+    },
+    "events": [
+      {
+        "task": "compress",
+        "event": "admission_ready",
+        "reason": "dependency ingest is terminal-success"
+      },
+      {
+        "task": "parse",
+        "event": "admission_ready",
+        "reason": "dependency fetch is terminal-success"
+      }
+    ],
+    "archived_tasks": [
+      {
+        "id": "hist_1000",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 563
+      },
+      {
+        "id": "hist_1001",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 200
+      },
+      {
+        "id": "hist_1002",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 596
+      },
+      {
+        "id": "hist_1003",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 187
+      },
+      {
+        "id": "hist_1004",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 598
+      },
+      {
+        "id": "hist_1005",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 202
+      },
+      {
+        "id": "hist_1006",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 351
+      },
+      {
+        "id": "hist_1007",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 408
+      },
+      {
+        "id": "hist_1008",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 350
+      },
+      {
+        "id": "hist_1009",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 459
+      },
+      {
+        "id": "hist_1010",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 161
+      },
+      {
+        "id": "hist_1011",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 380
+      },
+      {
+        "id": "hist_1012",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 315
+      },
+      {
+        "id": "hist_1013",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 332
+      },
+      {
+        "id": "hist_1014",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 176
+      },
+      {
+        "id": "hist_1015",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 523
+      },
+      {
+        "id": "hist_1016",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 110
+      },
+      {
+        "id": "hist_1017",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 369
+      },
+      {
+        "id": "hist_1018",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 79
+      },
+      {
+        "id": "hist_1019",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 68
+      },
+      {
+        "id": "hist_1020",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 97
+      },
+      {
+        "id": "hist_1021",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 542
+      },
+      {
+        "id": "hist_1022",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 323
+      },
+      {
+        "id": "hist_1023",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 126
+      },
+      {
+        "id": "hist_1024",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 145
+      },
+      {
+        "id": "hist_1025",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 338
+      },
+      {
+        "id": "hist_1026",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 394
+      },
+      {
+        "id": "hist_1027",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 504
+      },
+      {
+        "id": "hist_1028",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 326
+      },
+      {
+        "id": "hist_1029",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 524
+      },
+      {
+        "id": "hist_1030",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 589
+      },
+      {
+        "id": "hist_1031",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 39
+      },
+      {
+        "id": "hist_1032",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 581
+      },
+      {
+        "id": "hist_1033",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 483
+      },
+      {
+        "id": "hist_1034",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 81
+      },
+      {
+        "id": "hist_1035",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 258
+      },
+      {
+        "id": "hist_1036",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 554
+      },
+      {
+        "id": "hist_1037",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 390
+      },
+      {
+        "id": "hist_1038",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 456
+      },
+      {
+        "id": "hist_1039",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 501
+      },
+      {
+        "id": "hist_1040",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 380
+      },
+      {
+        "id": "hist_1041",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 29
+      },
+      {
+        "id": "hist_1042",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 41
+      },
+      {
+        "id": "hist_1043",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 315
+      },
+      {
+        "id": "hist_1044",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 557
+      },
+      {
+        "id": "hist_1045",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 399
+      },
+      {
+        "id": "hist_1046",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 333
+      },
+      {
+        "id": "hist_1047",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 545
+      },
+      {
+        "id": "hist_1048",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 213
+      },
+      {
+        "id": "hist_1049",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 493
+      },
+      {
+        "id": "hist_1050",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 422
+      },
+      {
+        "id": "hist_1051",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 466
+      },
+      {
+        "id": "hist_1052",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 147
+      },
+      {
+        "id": "hist_1053",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 581
+      },
+      {
+        "id": "hist_1054",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 440
+      },
+      {
+        "id": "hist_1055",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 444
+      },
+      {
+        "id": "hist_1056",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 402
+      },
+      {
+        "id": "hist_1057",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 380
+      },
+      {
+        "id": "hist_1058",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 319
+      },
+      {
+        "id": "hist_1059",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 493
+      },
+      {
+        "id": "hist_1060",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 533
+      },
+      {
+        "id": "hist_1061",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 413
+      },
+      {
+        "id": "hist_1062",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 375
+      },
+      {
+        "id": "hist_1063",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 233
+      },
+      {
+        "id": "hist_1064",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 116
+      },
+      {
+        "id": "hist_1065",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 273
+      },
+      {
+        "id": "hist_1066",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 88
+      },
+      {
+        "id": "hist_1067",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 479
+      },
+      {
+        "id": "hist_1068",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 243
+      },
+      {
+        "id": "hist_1069",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 576
+      },
+      {
+        "id": "hist_1070",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072,
+        "duration_s": 502
+      },
+      {
+        "id": "hist_1071",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 573
+      },
+      {
+        "id": "hist_1072",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 399
+      },
+      {
+        "id": "hist_1073",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 429
+      },
+      {
+        "id": "hist_1074",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1536,
+        "duration_s": 245
+      },
+      {
+        "id": "hist_1075",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 3,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 293
+      },
+      {
+        "id": "hist_1076",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 450
+      },
+      {
+        "id": "hist_1077",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 1024,
+        "duration_s": 234
+      },
+      {
+        "id": "hist_1078",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 395
+      },
+      {
+        "id": "hist_1079",
+        "state": "BLOCKED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 101
+      },
+      {
+        "id": "hist_1080",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 512,
+        "duration_s": 116
+      },
+      {
+        "id": "hist_1081",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 2560,
+        "duration_s": 287
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 6,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 13312,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran. archived_tasks are historical records only: they are already terminal or routine maintenance and are NOT part of the pending decision; do not include them in any calculation for it."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Longest dependency chain duration ending at a non-success task.",
+    "expected_answer": 70,
+    "derivation": "ingest 20 + compress 35 + upload 15 = 70; fetch 40 + parse 10 = 50; max = 70."
+  }
+}

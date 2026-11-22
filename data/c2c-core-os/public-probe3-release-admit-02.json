@@ -1,0 +1,76 @@
+{
+  "id": "os-c2c-probe3-release-admit-02",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 12,
+      "gpu_slots": 2,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "stream",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "reduce",
+        "state": "READY",
+        "depends_on": [
+          "stream"
+        ],
+        "cpu": 2,
+        "gpu": 1,
+        "memory_mb": 5120
+      },
+      {
+        "id": "publish2",
+        "state": "BLOCKED",
+        "depends_on": [
+          "reduce"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_release",
+      "question": "When stream finishes and releases its resources, and reduce is then admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The scheduler is blocked until this projection is verified."
+    },
+    "events": [
+      {
+        "task": "stream",
+        "event": "progress",
+        "percent": 97
+      },
+      {
+        "task": "reduce",
+        "event": "admission_ready",
+        "reason": "will be terminal-success once stream completes"
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 20480,
+    "active_tasks": [
+      "stream"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Remaining free_memory_mb after stream releases and reduce is admitted.",
+    "expected_answer": 19456,
+    "derivation": "20480 + 4096 = 24576; 24576 - 5120 = 19456."
+  }
+}

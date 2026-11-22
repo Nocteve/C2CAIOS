@@ -1,0 +1,19 @@
+{
+  "name": "fixed_paired_short_context_execution_v1",
+  "events_path": "artifacts/autonomy-20261005/v4/events.jsonl",
+  "events_sha256": "08a581d8939164959a588b786f79e89e9868f9b833d232cbad66a456a704abff",
+  "case_ids": ["job01", "job02", "job03", "job04", "job05", "job06", "job07", "job08"],
+  "selection": "first actual task_declared per parent independent of output; job02 is explicitly a public-input no-delegation control",
+  "model_order": ["sender", "receiver"],
+  "max_model_calls": 2,
+  "max_new_tokens": 384,
+  "maximum_total_calls": 32,
+  "decode": "native HF greedy, thinking disabled, free output and exact Worker contract validation after generation",
+  "context": "same fresh public goal, notes, rules, missing-information facts, authorized snapshot and original task command; no mixed role history or old reports",
+  "tools": "actual inspect and public candidate check; no host repair or inferred model answer",
+  "scope": "execution calibration only; not autonomous planning, original Planner KV, communication baseline or C2C gate",
+  "evaluation": ["factual report accuracy", "legal and effective edits", "actual assigned-task criteria", "public parent completion", "format and token/call budget failures"],
+  "no_tool_call_is_not_failure": true,
+  "training": false,
+  "resampling_or_prompt_search": false
+}

@@ -1,0 +1,33 @@
+{
+  "scope": "six offline next-action calls; no online repair or C2C inference",
+  "events_path": "artifacts/autonomy-20261005/v3/events.jsonl",
+  "events_sha256": "0fe4568078bc56df4c4c9a17b4ec656427a41352463246a8a2e8ff7b3acdf101",
+  "case_ids": [
+    "job01",
+    "job02"
+  ],
+  "selection": "first two IDs in frozen manifest, first Planner invocation consuming actual Worker artifact, else first after public check; no correctness filter",
+  "arms": [
+    {
+      "name": "free-greedy",
+      "thinking": false,
+      "seed": 42,
+      "max_new_tokens": 512
+    },
+    {
+      "name": "thinking-seed42",
+      "thinking": true,
+      "seed": 42,
+      "max_new_tokens": 1024
+    },
+    {
+      "name": "thinking-seed43",
+      "thinking": true,
+      "seed": 43,
+      "max_new_tokens": 1024
+    }
+  ],
+  "reference": "recorded constrained greedy output; not rerun or overwritten",
+  "attribution": "nonthinking free output also uses native HF full prefill instead of custom incremental decode; thinking combines mode, sampling and budget; not isolated causal inference",
+  "no_more_prompt_tuning_in_this_diagnostic": true
+}

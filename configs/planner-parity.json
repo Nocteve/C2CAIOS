@@ -1,0 +1,19 @@
+{
+  "events_path": "artifacts/autonomy-20261005/v3/events.jsonl",
+  "events_sha256": "0fe4568078bc56df4c4c9a17b4ec656427a41352463246a8a2e8ff7b3acdf101",
+  "case_ids": [
+    "job01",
+    "job02",
+    "job03",
+    "job04",
+    "job05",
+    "job06",
+    "job07",
+    "job08"
+  ],
+  "selection": "all eight; first request consuming Worker artifact, else first request consuming public check; replay all actual earlier Planner turns without executing actions",
+  "max_new_tokens": 512,
+  "decode": "same frozen greedy JSON schema for incremental replay and native generation",
+  "scope": "logits and full-action identity diagnosis, no quality or C2C comparison",
+  "failure_policy": "retain mismatch; do not force reference tokens to continue a diverged autoregressive replay"
+}

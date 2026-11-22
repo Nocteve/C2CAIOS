@@ -1,0 +1,8 @@
+{
+  "events_path": "artifacts/native-tools-20261006/v2/events.jsonl",
+  "events_sha256": "8a329bbe5df20664f384a2cf1713fd9124bf20164ab16030953a5a49e4dadab8",
+  "selection": "Every actual task_declared in the frozen run, in original order, with the original recorded Planner token prefix; no new assignment or answer",
+  "methods": ["legacy_json", "native_tools"],
+  "scope": "Actual Worker-process recovery on fixed historical Planner assignments; historical token-ID prefix re-prefill, not a new autonomous Planner run, no C2C claim",
+  "stop_policy": "One pass per assignment/interface, keep all failures, no prompt tuning or retries. Leave server running."
+}

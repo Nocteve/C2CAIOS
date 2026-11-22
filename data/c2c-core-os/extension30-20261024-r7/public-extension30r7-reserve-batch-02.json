@@ -1,0 +1,102 @@
+{
+  "id": "os-c2c-extension30r3-reserve-batch-02",
+  "goal": "Choose the original scheduling plan and verify each field in public_background.pending_decisions with one bounded Worker task. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 10,
+      "gpu_slots": 1,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "janitor",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "rollup",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "merge",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "vault",
+        "state": "BLOCKED",
+        "depends_on": [
+          "rollup"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "events": [
+      {
+        "policy": "failover",
+        "event": "reservation",
+        "memory_mb": 2048
+      },
+      {
+        "task": "rollup",
+        "event": "admission_ready"
+      },
+      {
+        "task": "merge",
+        "event": "admission_ready"
+      }
+    ],
+    "pending_decisions": [
+      {
+        "field": "remaining_memory_after_reserve",
+        "question": "After setting aside the failover memory reservation and admitting every READY batch job, what will the remaining free_memory_mb be?",
+        "controller_note": "The plan branch for remaining_memory_after_reserve depends on this value; it must be verified before the controller executes the chosen plan."
+      },
+      {
+        "field": "ready_batch_memory_mb",
+        "question": "Sum the memory_mb of every READY batch job, excluding RUNNING and BLOCKED jobs."
+      },
+      {
+        "field": "free_memory_after_reservation_mb",
+        "question": "Compute current free_memory_mb after setting aside the failover reservation, before admitting any READY job."
+      }
+    ],
+    "communication_test_contract": {
+      "purpose": "Independent verification of values in the same original reasoning chain; calls do not consume each other as DAG artifacts; not autonomous delegation performance.",
+      "instructions": "Compute the original scheduling decision and its relevant intermediate checks. Delegate one useful verification task for each requested field. Every command and deliverable must include the exact field name. Include the public operands and arithmetic to verify. Ask each Worker to return {\"action\":\"report\",\"report\":{\"EXACT_FIELD_NAME\":NUMBER}} for its own field only. Do not substitute a different field or silently omit a check. Worker must check the arithmetic rather than merely affirm the proposed value.",
+      "required_fields": [
+        "remaining_memory_after_reserve",
+        "ready_batch_memory_mb",
+        "free_memory_after_reservation_mb"
+      ]
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 22528,
+    "active_tasks": [
+      "janitor"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller needs the original scheduling decision and its intermediate verification values named in pending_decisions, each verified by its own bounded task. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "communication_extension",
+    "primary_field": "remaining_memory_after_reserve"
+  }
+}

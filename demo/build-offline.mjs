@@ -1,0 +1,18 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const dir=path.dirname(fileURLToPath(import.meta.url));
+let page=await fs.readFile(path.join(dir,'index.html'),'utf8');
+const css=await fs.readFile(path.join(dir,'app.css'),'utf8');
+const data=JSON.parse(await fs.readFile(path.join(dir,'run-data.json'),'utf8'));
+data.os=JSON.parse(await fs.readFile(path.join(dir,'os-data.json'),'utf8'));
+data.system=JSON.parse(await fs.readFile(path.join(dir,'system-data.json'),'utf8'));
+const i18n=await fs.readFile(path.join(dir,'i18n.js'),'utf8');
+const js=await fs.readFile(path.join(dir,'app.js'),'utf8');
+const safe=s=>s.replace(/<\/script/gi,'<\\/script');
+page=page.replace(/<link rel="stylesheet" href="\.\/app.css[^\"]*">/,()=>'<style>'+css+'</style>');
+page=page.replace(/<script src="\.\/i18n.js[^\"]*"><\/script>/,()=>'<script type="application/json" id="embedded-run-data">'+JSON.stringify(data).replace(/</g,'\\u003c')+'</script>\n<script>'+safe(i18n)+'</script>');
+page=page.replace(/<script src="\.\/app.js[^\"]*"><\/script>/,()=>'<script>'+safe(js)+'</script>');
+const output=path.resolve(dir,'../jieTi/修订交付/C2C演示-中英双语离线版.html');
+await fs.writeFile(output,page,'utf8');
+console.log(output);

@@ -1,0 +1,196 @@
+{
+  "id": "os-c2c-extension30r7-admission-mem-02",
+  "goal": "Choose the next scheduling plan by this rule: if remaining_memory_after_ready stays at or above 8192 MB, the plan is: admit every READY task; otherwise: defer the smallest READY task. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 2,
+      "memory_mb": 24576,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "prep",
+        "state": "SUCCEEDED",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "scan",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "index",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "seal",
+        "state": "READY",
+        "depends_on": [
+          "prep"
+        ],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_ready",
+      "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The plan branch for remaining_memory_after_ready depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "scan",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      },
+      {
+        "task": "index",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      },
+      {
+        "task": "seal",
+        "event": "admission_ready",
+        "reason": "dependency prep is terminal-success"
+      }
+    ],
+    "parallel_question_copies": [
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 16,
+            "gpu_slots": 4,
+            "memory_mb": 49152,
+            "max_parallel_tasks": 4,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "prep",
+              "state": "SUCCEEDED",
+              "depends_on": [],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 4096
+            },
+            {
+              "id": "scan",
+              "state": "READY",
+              "depends_on": [
+                "prep"
+              ],
+              "cpu": 2,
+              "gpu": 0,
+              "memory_mb": 8192
+            },
+            {
+              "id": "index",
+              "state": "READY",
+              "depends_on": [
+                "prep"
+              ],
+              "cpu": 2,
+              "gpu": 0,
+              "memory_mb": 6144
+            },
+            {
+              "id": "seal",
+              "state": "READY",
+              "depends_on": [
+                "prep"
+              ],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 4096
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_b_value",
+            "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+            "controller_note": "The plan branch for replica_b_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "task": "scan",
+              "event": "admission_ready",
+              "reason": "dependency prep is terminal-success"
+            },
+            {
+              "task": "index",
+              "event": "admission_ready",
+              "reason": "dependency prep is terminal-success"
+            },
+            {
+              "task": "seal",
+              "event": "admission_ready",
+              "reason": "dependency prep is terminal-success"
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 16,
+          "free_gpu_slots": 4,
+          "free_memory_mb": 49152,
+          "active_tasks": [],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      }
+    ],
+    "verification_requests": [
+      {
+        "group": "A",
+        "target_field": "remaining_memory_after_ready",
+        "case_ref": "Original root public_background/current_state",
+        "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+        "report_key": "remaining_memory_after_ready"
+      },
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "case_ref": "parallel_question_copies[group=B]",
+        "question": "If every READY task is admitted, what will the remaining free_memory_mb be?",
+        "report_key": "replica_b_value"
+      }
+    ],
+    "communication_test_harness": {
+      "requested_complete_question_groups": 2,
+      "scope": "Communication-test load: solve the same complete question for independent number groups A/B/C. No intermediate-value checks and no cross-group arithmetic.",
+      "group_policy": "A is the original question and original numbers. Each additional group has its own complete public state. Same task IDs in different groups do not share state.",
+      "assignment_contract": "A full load has one distinct Worker report per group. For each actual assignment name its exact target_field in command and deliverable, quote the operands from THAT group, and ask for the complete answer under report_key as a JSON numeric literal. Never mix groups or substitute an intermediate value.",
+      "measurement": "Record requested and actual coverage separately; original group A is scored independently. Other groups cannot supply a missing A report even if their answers coincide.",
+      "system_boundary": "This is a test condition, not the system design. Planner actions remain real generated decisions; self-execution, zero delegation and takeover are legal. Do not host-fill tasks."
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 24576,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "parallel_question_development",
+    "primary_field": "remaining_memory_after_ready"
+  }
+}

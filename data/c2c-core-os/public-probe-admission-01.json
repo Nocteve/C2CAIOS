@@ -1,0 +1,38 @@
+{
+  "id": "os-c2c-probe-admission-01",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 2,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {"id": "fetch", "state": "SUCCEEDED", "depends_on": [], "cpu": 1, "gpu": 0, "memory_mb": 1024},
+      {"id": "clean", "state": "RUNNING", "depends_on": ["fetch"], "cpu": 3, "gpu": 1, "memory_mb": 4096},
+      {"id": "build", "state": "BLOCKED", "depends_on": ["clean"], "cpu": 2, "gpu": 1, "memory_mb": 2048},
+      {"id": "test", "state": "BLOCKED", "depends_on": ["clean"], "cpu": 4, "gpu": 1, "memory_mb": 4096},
+      {"id": "ship", "state": "PENDING", "depends_on": ["build", "test"], "cpu": 1, "gpu": 0, "memory_mb": 1024}
+    ],
+    "events": [
+      {"task": "clean", "event": "started", "attempt": 1},
+      {"task": "build", "event": "admission_deferred", "reason": "dependency clean is not terminal-success"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 2,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 4096,
+    "active_tasks": ["clean"],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. Bounded admission arithmetic and dependency diagnosis are useful delegations right now; do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "resource_arithmetic",
+    "intended_question": "Once clean reaches terminal-success and releases its resources, how many of the currently non-running tasks become admissible simultaneously?",
+    "expected_answer": 2,
+    "derivation": "After clean: free cpu 2+3=5, gpu 1+1=2, mem 4096+4096=8192. build (2,1,2048) fits; test (4,1,4096) fits; ship deps unsatisfied. Count = 2."
+  }
+}

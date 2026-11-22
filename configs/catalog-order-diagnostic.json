@@ -1,0 +1,22 @@
+{
+  "name": "catalog_order_development_20261005",
+  "public_sha256": "0fc20862439074fe06b4cd4d8cdde4376bc1adfce6207de005fbc40431b197b9",
+  "paper_ids": ["1607.01759", "1602.03661"],
+  "questions_per_paper": 2,
+  "planning_order": "paper_first",
+  "methods": ["text_full", "text_brief", "c2c_shared"],
+  "catalog_orders": ["original", "reversed"],
+  "expected_cases": 24,
+  "evidence_budget": 96,
+  "intervention": "reverse only the complete valid-ID catalog at the end of the unchanged current command",
+  "selection": "first two papers and first two questions in the already frozen 16-paper development manifest",
+  "primary_observation": "paired actual emitted ID sequence under reversal; literal catalog prefix agreement and adjacent steps in presented order are descriptions, not semantic quality",
+  "no_reference_scoring": true,
+  "output_validation": "existing strict parser; unconstrained greedy generation; no repairs or answer successors",
+  "preparation": "one actual Planner snapshot and handoff per paper; each arm and both catalog orders reuse their own immutable cache",
+  "balance": "rotate method order by paper and question index; alternate catalog order by paper, question and method index",
+  "timing": "model load, actual shared preparation, each infer wall and internal stages, audits and logging; no OS-worker or end-to-end speed claim",
+  "stop_rule": "stop on input/cache identity or model/instrumentation fault; keep contract failures and all expected cases",
+  "formal_test": false,
+  "training": false
+}

@@ -1,0 +1,93 @@
+{
+  "source": "artifacts/os-sched-evidence-20261019/checks.json",
+  "workloadSource": "scripts/check_os_sched.py",
+  "serviceMs": {
+    "big1": 400,
+    "big2": 400,
+    "s1": 30,
+    "s2": 30,
+    "s3": 30,
+    "s4": 30,
+    "s5": 30,
+    "s6": 30
+  },
+  "fifoOrder": [
+    "big1",
+    "big2",
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5",
+    "s6"
+  ],
+  "fairOrder": [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5",
+    "s6",
+    "big1",
+    "big2"
+  ],
+  "fifoTatMs": 828.7500000000002,
+  "fairTatMs": 273.75,
+  "checks": [
+    {
+      "name": "cfs-vs-fifo-mean-turnaround",
+      "ok": true,
+      "detail": "FIFO 829ms vs CFS 274ms | FIFO order ['big1', 'big2', 's1', 's2', 's3', 's4', 's5', 's6'] | CFS order ['s1', 's2', 's3', 's4', 's5', 's6', 'big1', 'big2']"
+    },
+    {
+      "name": "cfs-small-task-waiting",
+      "ok": true,
+      "detail": "small-task mean waiting FIFO 706ms vs CFS 151ms"
+    },
+    {
+      "name": "cfs-invariants",
+      "ok": true,
+      "detail": "CFS I1/I2 all ok, done 8/8"
+    },
+    {
+      "name": "deadlock-cycle-detected",
+      "ok": true,
+      "detail": "cycles=[['t1', 't2', 't1']]"
+    },
+    {
+      "name": "deadlock-no-execution",
+      "ok": true,
+      "detail": "both tasks failed fast with zero executions (EDEADLK semantics)"
+    },
+    {
+      "name": "banker-naive-deadlocks",
+      "ok": true,
+      "detail": "fit-admission: both tasks hold 8/10, each wants +6 -> deadlock (leashed by the 8s test thread)"
+    },
+    {
+      "name": "banker-safe-state-prevents",
+      "ok": true,
+      "detail": "banker run finished with done=2 (B held in READY until A released; then B completed)"
+    },
+    {
+      "name": "cgroup-quota-kill",
+      "ok": true,
+      "detail": "violations=[('hung1', 'tokens')] | states: ok1:DONE, hung1:FAILED"
+    },
+    {
+      "name": "cgroup-files-live",
+      "ok": true,
+      "detail": "hung1 tokens.current=80, memory.events tail=['oom 0', 'oom_kill 0']"
+    },
+    {
+      "name": "cgroup-parent-survives",
+      "ok": true,
+      "detail": "runtime survived the quota kill; invariants intact"
+    },
+    {
+      "name": "cgroup-fork-fail",
+      "ok": true,
+      "detail": "4 admits ok, 5th denied: 'slice pids.max 4 reached (fork fail)' (cgroup fork-fail semantics)"
+    }
+  ]
+}

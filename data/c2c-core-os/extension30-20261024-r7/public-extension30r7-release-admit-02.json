@@ -1,0 +1,170 @@
+{
+  "id": "os-c2c-extension30r7-release-admit-02",
+  "goal": "Choose the next scheduling plan by this rule: if remaining_memory_after_release stays at or above 8192 MB, the plan is: admit the waiting successor now; otherwise: defer the waiting successor. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 12,
+      "gpu_slots": 2,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "stream",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "reduce",
+        "state": "READY",
+        "depends_on": [
+          "stream"
+        ],
+        "cpu": 2,
+        "gpu": 1,
+        "memory_mb": 5120
+      },
+      {
+        "id": "publish2",
+        "state": "BLOCKED",
+        "depends_on": [
+          "reduce"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_release",
+      "question": "When stream finishes and releases its resources, and reduce is then admitted, what will the remaining free_memory_mb be?",
+      "controller_note": "The plan branch for remaining_memory_after_release depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "task": "stream",
+        "event": "progress",
+        "percent": 97
+      },
+      {
+        "task": "reduce",
+        "event": "admission_ready",
+        "reason": "will be terminal-success once stream completes"
+      }
+    ],
+    "parallel_question_copies": [
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 24,
+            "gpu_slots": 4,
+            "memory_mb": 65536,
+            "max_parallel_tasks": 4,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "stream",
+              "state": "RUNNING",
+              "depends_on": [],
+              "cpu": 8,
+              "gpu": 0,
+              "memory_mb": 8192
+            },
+            {
+              "id": "reduce",
+              "state": "READY",
+              "depends_on": [
+                "stream"
+              ],
+              "cpu": 4,
+              "gpu": 2,
+              "memory_mb": 10240
+            },
+            {
+              "id": "publish2",
+              "state": "BLOCKED",
+              "depends_on": [
+                "reduce"
+              ],
+              "cpu": 2,
+              "gpu": 0,
+              "memory_mb": 4096
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_b_value",
+            "question": "When stream finishes and releases its resources, and reduce is then admitted, what will the remaining free_memory_mb be?",
+            "controller_note": "The plan branch for replica_b_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "task": "stream",
+              "event": "progress",
+              "percent": 97
+            },
+            {
+              "task": "reduce",
+              "event": "admission_ready",
+              "reason": "will be terminal-success once stream completes"
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 16,
+          "free_gpu_slots": 4,
+          "free_memory_mb": 40960,
+          "active_tasks": [
+            "stream"
+          ],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      }
+    ],
+    "verification_requests": [
+      {
+        "group": "A",
+        "target_field": "remaining_memory_after_release",
+        "case_ref": "Original root public_background/current_state",
+        "question": "When stream finishes and releases its resources, and reduce is then admitted, what will the remaining free_memory_mb be?",
+        "report_key": "remaining_memory_after_release"
+      },
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "case_ref": "parallel_question_copies[group=B]",
+        "question": "When stream finishes and releases its resources, and reduce is then admitted, what will the remaining free_memory_mb be?",
+        "report_key": "replica_b_value"
+      }
+    ],
+    "communication_test_harness": {
+      "requested_complete_question_groups": 2,
+      "scope": "Communication-test load: solve the same complete question for independent number groups A/B/C. No intermediate-value checks and no cross-group arithmetic.",
+      "group_policy": "A is the original question and original numbers. Each additional group has its own complete public state. Same task IDs in different groups do not share state.",
+      "assignment_contract": "A full load has one distinct Worker report per group. For each actual assignment name its exact target_field in command and deliverable, quote the operands from THAT group, and ask for the complete answer under report_key as a JSON numeric literal. Never mix groups or substitute an intermediate value.",
+      "measurement": "Record requested and actual coverage separately; original group A is scored independently. Other groups cannot supply a missing A report even if their answers coincide.",
+      "system_boundary": "This is a test condition, not the system design. Planner actions remain real generated decisions; self-execution, zero delegation and takeover are legal. Do not host-fill tasks."
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 2,
+    "free_memory_mb": 20480,
+    "active_tasks": [
+      "stream"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "parallel_question_development",
+    "primary_field": "remaining_memory_after_release"
+  }
+}

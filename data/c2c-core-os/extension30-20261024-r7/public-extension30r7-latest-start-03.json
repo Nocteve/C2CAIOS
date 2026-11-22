@@ -1,0 +1,132 @@
+{
+  "id": "os-c2c-extension30r7-latest-start-03",
+  "goal": "Choose the next scheduling plan by this rule: if start_slack_seconds stays at least 60 s, the plan is: admit the deadline task this cycle; otherwise: start the deadline task immediately with priority. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 1,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "invoice",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096,
+        "remaining_work_s": 240,
+        "hard_deadline_s": 520
+      }
+    ],
+    "pending_decision": {
+      "field": "start_slack_seconds",
+      "question": "The wall clock is at 150s and invoice still needs 240s of work before its hard deadline at 520s. How many seconds of slack remain before invoice must start?",
+      "controller_note": "The plan branch for start_slack_seconds depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "clock": "runtime",
+        "event": "sync",
+        "now_s": 150
+      },
+      {
+        "task": "invoice",
+        "event": "deadline_set",
+        "hard_deadline_s": 520,
+        "remaining_work_s": 240
+      }
+    ],
+    "parallel_question_copies": [
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 16,
+            "gpu_slots": 2,
+            "memory_mb": 32768,
+            "max_parallel_tasks": 3,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "invoice",
+              "state": "READY",
+              "depends_on": [],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 8192,
+              "remaining_work_s": 480,
+              "hard_deadline_s": 1040
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_b_value",
+            "question": "The wall clock is at 300s and invoice still needs 480s of work before its hard deadline at 1040s. How many seconds of slack remain before invoice must start?",
+            "controller_note": "The plan branch for replica_b_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "clock": "runtime",
+              "event": "sync",
+              "now_s": 300
+            },
+            {
+              "task": "invoice",
+              "event": "deadline_set",
+              "hard_deadline_s": 1040,
+              "remaining_work_s": 480
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 12,
+          "free_gpu_slots": 2,
+          "free_memory_mb": 24576,
+          "active_tasks": [],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      }
+    ],
+    "verification_requests": [
+      {
+        "group": "A",
+        "target_field": "start_slack_seconds",
+        "case_ref": "Original root public_background/current_state",
+        "question": "The wall clock is at 150s and invoice still needs 240s of work before its hard deadline at 520s. How many seconds of slack remain before invoice must start?",
+        "report_key": "start_slack_seconds"
+      },
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "case_ref": "parallel_question_copies[group=B]",
+        "question": "The wall clock is at 300s and invoice still needs 480s of work before its hard deadline at 1040s. How many seconds of slack remain before invoice must start?",
+        "report_key": "replica_b_value"
+      }
+    ],
+    "communication_test_harness": {
+      "requested_complete_question_groups": 2,
+      "scope": "Communication-test load: solve the same complete question for independent number groups A/B/C. No intermediate-value checks and no cross-group arithmetic.",
+      "group_policy": "A is the original question and original numbers. Each additional group has its own complete public state. Same task IDs in different groups do not share state.",
+      "assignment_contract": "A full load has one distinct Worker report per group. For each actual assignment name its exact target_field in command and deliverable, quote the operands from THAT group, and ask for the complete answer under report_key as a JSON numeric literal. Never mix groups or substitute an intermediate value.",
+      "measurement": "Record requested and actual coverage separately; original group A is scored independently. Other groups cannot supply a missing A report even if their answers coincide.",
+      "system_boundary": "This is a test condition, not the system design. Planner actions remain real generated decisions; self-execution, zero delegation and takeover are legal. Do not host-fill tasks."
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 6,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 12288,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "parallel_question_development",
+    "primary_field": "start_slack_seconds"
+  }
+}

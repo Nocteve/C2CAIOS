@@ -1,0 +1,70 @@
+{
+ "id": "os-c2c-probe5-ratelimit-01",
+ "goal": "Bring the public gateway state to a compliant next step while preserving token bucket invariants and the admission audit trail.",
+ "public_background": {
+  "runtime": {
+   "bucket_capacity_tokens": 10,
+   "refill_tokens_per_second": 1,
+   "algorithm": "Discrete token bucket: on each request at time t, tokens = min(capacity, tokens + rate*(t-last_t)); admit iff tokens >= size, consuming s tokens, else drop.",
+   "audit_window_s": 3
+  },
+  "tasks": [
+   {
+    "id": "meter",
+    "state": "SUCCEEDED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 256,
+    "duration_s": 3
+   },
+   {
+    "id": "ledger_flush",
+    "state": "READY",
+    "depends_on": [
+     "meter"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 512,
+    "duration_s": 2
+   }
+  ],
+  "pending_decision": {
+   "field": "admitted_requests",
+   "question": "How many of the 4 requests in the audit window are admitted by the token bucket (capacity 10, refill 1 token/s, requests at t=0,1,2,3 with sizes 3,2,4,5)?",
+   "controller_note": "The rate-limit controller is blocked until the admission count is verified."
+  },
+  "events": [
+   {
+    "request_time_s": 0,
+    "request_size_tokens": 3
+   },
+   {
+    "request_time_s": 1,
+    "request_size_tokens": 2
+   },
+   {
+    "request_time_s": 2,
+    "request_size_tokens": 4
+   },
+   {
+    "request_time_s": 3,
+    "request_size_tokens": 5
+   }
+  ]
+ },
+ "current_state": {
+  "bucket_tokens_now": 10,
+  "last_refill_time_s": 0,
+  "requests_seen": 4,
+  "drops_seen": 0,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Token bucket admission count over the 4-request audit window.",
+  "expected_answer": 3,
+  "derivation": "t=0 size=3: admit (left 7); t=1 size=2: admit (left 6); t=2 size=4: admit (left 3); t=3 size=5: DROP (only 4); admitted = 3 of 4."
+ }
+}

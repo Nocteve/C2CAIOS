@@ -1,0 +1,188 @@
+{
+  "id": "os-c2c-extension30r7-reserve-batch-01",
+  "goal": "Choose the next scheduling plan by this rule: if remaining_memory_after_reserve stays at or above 8192 MB, the plan is: admit every READY job; otherwise: defer the smallest READY job. Your action reason must state the chosen plan together with the value that determines it, and you must delegate one bounded verification task for that value. Preserve dependencies, resource limits and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 10,
+      "gpu_slots": 1,
+      "memory_mb": 32768,
+      "max_parallel_tasks": 4,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "watchdog",
+        "state": "RUNNING",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 4096
+      },
+      {
+        "id": "agg",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 5120
+      },
+      {
+        "id": "join",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 2,
+        "gpu": 0,
+        "memory_mb": 3072
+      },
+      {
+        "id": "archive",
+        "state": "BLOCKED",
+        "depends_on": [
+          "agg"
+        ],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      }
+    ],
+    "pending_decision": {
+      "field": "remaining_memory_after_reserve",
+      "question": "After setting aside the failover memory reservation and admitting every READY batch job, what will the remaining free_memory_mb be?",
+      "controller_note": "The plan branch for remaining_memory_after_reserve depends on this value; it must be verified before the controller executes the chosen plan."
+    },
+    "events": [
+      {
+        "policy": "failover",
+        "event": "reservation",
+        "memory_mb": 4096
+      },
+      {
+        "task": "agg",
+        "event": "admission_ready"
+      },
+      {
+        "task": "join",
+        "event": "admission_ready"
+      }
+    ],
+    "parallel_question_copies": [
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "public_background": {
+          "runtime": {
+            "cpu_slots": 20,
+            "gpu_slots": 2,
+            "memory_mb": 65536,
+            "max_parallel_tasks": 4,
+            "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+          },
+          "tasks": [
+            {
+              "id": "watchdog",
+              "state": "RUNNING",
+              "depends_on": [],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 8192
+            },
+            {
+              "id": "agg",
+              "state": "READY",
+              "depends_on": [],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 10240
+            },
+            {
+              "id": "join",
+              "state": "READY",
+              "depends_on": [],
+              "cpu": 4,
+              "gpu": 0,
+              "memory_mb": 6144
+            },
+            {
+              "id": "archive",
+              "state": "BLOCKED",
+              "depends_on": [
+                "agg"
+              ],
+              "cpu": 2,
+              "gpu": 0,
+              "memory_mb": 4096
+            }
+          ],
+          "pending_decision": {
+            "field": "replica_b_value",
+            "question": "After setting aside the failover memory reservation and admitting every READY batch job, what will the remaining free_memory_mb be?",
+            "controller_note": "The plan branch for replica_b_value depends on this value; it must be verified before the controller executes the chosen plan."
+          },
+          "events": [
+            {
+              "policy": "failover",
+              "event": "reservation",
+              "memory_mb": 8192
+            },
+            {
+              "task": "agg",
+              "event": "admission_ready"
+            },
+            {
+              "task": "join",
+              "event": "admission_ready"
+            }
+          ]
+        },
+        "current_state": {
+          "free_cpu_slots": 16,
+          "free_gpu_slots": 2,
+          "free_memory_mb": 57344,
+          "active_tasks": [
+            "watchdog"
+          ],
+          "failed_tasks": [],
+          "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+        }
+      }
+    ],
+    "verification_requests": [
+      {
+        "group": "A",
+        "target_field": "remaining_memory_after_reserve",
+        "case_ref": "Original root public_background/current_state",
+        "question": "After setting aside the failover memory reservation and admitting every READY batch job, what will the remaining free_memory_mb be?",
+        "report_key": "remaining_memory_after_reserve"
+      },
+      {
+        "group": "B",
+        "target_field": "replica_b_value",
+        "case_ref": "parallel_question_copies[group=B]",
+        "question": "After setting aside the failover memory reservation and admitting every READY batch job, what will the remaining free_memory_mb be?",
+        "report_key": "replica_b_value"
+      }
+    ],
+    "communication_test_harness": {
+      "requested_complete_question_groups": 2,
+      "scope": "Communication-test load: solve the same complete question for independent number groups A/B/C. No intermediate-value checks and no cross-group arithmetic.",
+      "group_policy": "A is the original question and original numbers. Each additional group has its own complete public state. Same task IDs in different groups do not share state.",
+      "assignment_contract": "A full load has one distinct Worker report per group. For each actual assignment name its exact target_field in command and deliverable, quote the operands from THAT group, and ask for the complete answer under report_key as a JSON numeric literal. Never mix groups or substitute an intermediate value.",
+      "measurement": "Record requested and actual coverage separately; original group A is scored independently. Other groups cannot supply a missing A report even if their answers coincide.",
+      "system_boundary": "This is a test condition, not the system design. Planner actions remain real generated decisions; self-execution, zero delegation and takeover are legal. Do not host-fill tasks."
+    }
+  },
+  "current_state": {
+    "free_cpu_slots": 8,
+    "free_gpu_slots": 1,
+    "free_memory_mb": 28672,
+    "active_tasks": [
+      "watchdog"
+    ],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "parallel_question_development",
+    "primary_field": "remaining_memory_after_reserve"
+  }
+}

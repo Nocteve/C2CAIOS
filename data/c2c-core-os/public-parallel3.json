@@ -1,0 +1,25 @@
+{
+  "id": "os-c2c-core-parallel-03",
+  "goal": "Before the next scheduling change, produce two independent read-only diagnosis reports: one assessing the sustained CPU spike, one assessing the memory growth. Each report must reason only from the public facts below, state whether its target is admissible as a new task, assess risk, and propose next steps. No state may be modified and no execution may be claimed.",
+  "public_background": {
+    "runtime": {"cpu_slots": 6, "gpu_slots": 1, "memory_mb": 12288, "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."},
+    "tasks": [
+      {"id": "baseline", "state": "SUCCEEDED", "depends_on": [], "cpu": 2, "gpu": 0, "memory_mb": 2048},
+      {"id": "diag_cpu_spike", "state": "READY", "depends_on": ["baseline"], "cpu": 2, "gpu": 0, "memory_mb": 3072},
+      {"id": "diag_mem_growth", "state": "READY", "depends_on": ["baseline"], "cpu": 2, "gpu": 0, "memory_mb": 3072}
+    ],
+    "events": [
+      {"task": "baseline", "event": "succeeded", "attempt": 1, "elapsed_s": 76},
+      {"task": "diag_cpu_spike", "event": "admission_ready", "reason": "dependency baseline is terminal-success and resources fit"},
+      {"task": "diag_cpu_spike", "event": "evidence", "metric": "cpu_util", "value": "97%", "sustained_s": 300, "threshold": "80%"},
+      {"task": "diag_mem_growth", "event": "admission_ready", "reason": "dependency baseline is terminal-success and resources fit"},
+      {"task": "diag_mem_growth", "event": "evidence", "metric": "rss_growth", "value": "+40MB/min", "sustained_s": 300, "threshold": "+10MB/min"}
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 6, "free_gpu_slots": 1, "free_memory_mb": 12288,
+    "active_tasks": [], "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. The Planner must decide the task split; no hidden answer or host-created second command is supplied."
+  }
+}

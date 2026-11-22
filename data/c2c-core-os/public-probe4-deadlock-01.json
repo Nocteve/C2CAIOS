@@ -1,0 +1,93 @@
+{
+ "id": "os-c2c-probe4-deadlock-01",
+ "goal": "Bring the public runtime state to a diagnosable next step while preserving wait-for edges and the deadlock audit trail.",
+ "public_background": {
+  "runtime": {
+   "detection_algorithm": "wait-for graph cycle detection over reported hold-and-wait edges",
+   "processes": [
+    "P0",
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "resources": [
+    "R0",
+    "R1",
+    "R2"
+   ],
+   "policy": "An edge Pi -> Pj means Pi holds a resource Pj is waiting for."
+  },
+  "tasks": [
+   {
+    "id": "graph_build",
+    "state": "SUCCEEDED",
+    "depends_on": [],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 2
+   },
+   {
+    "id": "cycle_report",
+    "state": "READY",
+    "depends_on": [
+     "graph_build"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 3
+   },
+   {
+    "id": "victim_select",
+    "state": "BLOCKED",
+    "depends_on": [
+     "cycle_report"
+    ],
+    "cpu": 1,
+    "gpu": 0,
+    "memory_mb": 128,
+    "duration_s": 2
+   }
+  ],
+  "pending_decision": {
+   "field": "cycle_processes",
+   "question": "The wait-for edges are P0->P1, P1->P2, P2->P0, P3->P1. How many distinct processes participate in a wait-for cycle?",
+   "controller_note": "The deadlock auditor is blocked until the cycle membership is verified."
+  },
+  "events": [
+   {
+    "waiter": "P0",
+    "holder": "P1",
+    "resource": "R0"
+   },
+   {
+    "waiter": "P1",
+    "holder": "P2",
+    "resource": "R1"
+   },
+   {
+    "waiter": "P2",
+    "holder": "P0",
+    "resource": "R2"
+   },
+   {
+    "waiter": "P3",
+    "holder": "P1",
+    "resource": "R3"
+   }
+  ]
+ },
+ "current_state": {
+  "processes_running": 4,
+  "processes_blocked": 4,
+  "edges_reported": 4,
+  "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+ },
+ "probe": {
+  "family": "derived_intermediate",
+  "intended_question": "Number of distinct processes in a wait-for cycle.",
+  "expected_answer": 3,
+  "derivation": "P0->P1->P2->P0 is a cycle of 3 distinct processes; P3->P1 does not close a cycle."
+ }
+}

@@ -1,0 +1,76 @@
+{
+  "protocol": "worker_ledger_component_once_v5_rank4_cap_repair",
+  "public_path": "data/ledger-component-v3/public.json",
+  "training_path": "data/ledger-component-v3/train-teachers.offline.json",
+  "calibration_case_ids": [
+    "purchase_invoice-0",
+    "purchase_invoice-1",
+    "returned_goods-0",
+    "returned_goods-1",
+    "warehouse_rollforward-0",
+    "warehouse_rollforward-1"
+  ],
+  "validation_case_ids": [
+    "threshold_delivery-0",
+    "threshold_delivery-1",
+    "threshold_delivery-2",
+    "threshold_delivery-3",
+    "threshold_delivery-4",
+    "threshold_delivery-5",
+    "settled_payment_events-0",
+    "settled_payment_events-1",
+    "settled_payment_events-2",
+    "settled_payment_events-3",
+    "settled_payment_events-4",
+    "settled_payment_events-5"
+  ],
+  "source_family_scope": "Three synthetic business-rule/data-structure families train; two structurally distinct families validation. No old task data imported.",
+  "training_trigger": "Any actual semantic failure in six fixed base calibration tasks; otherwise no training",
+  "limits": {
+    "domain": "ledger_component",
+    "worker_interface": "native_tools",
+    "worker_max_model_calls": 2,
+    "worker_max_new_tokens": 384,
+    "max_generated_tokens_per_parent": 768,
+    "worker_deadline_seconds": 180,
+    "model_service_deadline_seconds": 240,
+    "training_deadline_seconds": 900
+  },
+  "training": {
+    "train_families": [
+      "purchase_invoice",
+      "returned_goods",
+      "warehouse_rollforward"
+    ],
+    "training_examples": 33,
+    "rank": 4,
+    "alpha": 8,
+    "epochs": 2,
+    "learning_rate": 0.0003,
+    "clip_norm": 1.0,
+    "seed": 42,
+    "max_trainable_parameters": 1000000,
+    "max_sequence_tokens": 2048
+  },
+  "adoption_threshold": {
+    "additional_correct_validation_cases_at_least": 2,
+    "no_compliant_control_regression": true,
+    "no_missing_fact_control_regression": true
+  },
+  "validation_consumption": "After fixed final checkpoint; base and adapted each once; no checkpoint selection or further tuning",
+  "input_sha256": {
+    "data/ledger-component-v3/public.json": "c67b81694614b2866b556aa7a4b2f4784f7a98a568f487b6744d6c0585cf838d",
+    "data/ledger-component-v3/train-teachers.offline.json": "ff9048b81fe315cee347d116fee029aba97da4a84eb3236b910fed265544c972",
+    "data/ledger-component-v3/lineage.json": "7693bf071d1979bb688067a0ed2f56f3ab0faf317b01350a182dcc42cd2b272e",
+    "data/ledger-component-v3/teacher-checks.json": "05437e2f4a8cb5e08e2df06105ab4e5724d792ef4f1c94b5368a4aae3b94bcde",
+    "data/ledger-component-v3/source-families/purchase_invoice.py": "4463568c8c4e1222e22cead73c61581cd36b43d2a00b4466e86c1de67be98952",
+    "data/ledger-component-v3/source-families/returned_goods.py": "6a56171c1d1b0c56c6050c1acc1196bcadc7b9f4c0d3eb3f43295a0bf665e192",
+    "data/ledger-component-v3/source-families/settled_payment_events.py": "328e7db25f313dc55f306fddab2dd7f79de68d8bacc41f3425331315567dc81b",
+    "data/ledger-component-v3/source-families/threshold_delivery.py": "0c7918a0063c8f28b7c62275196cd61671250a15d41c31f4b0ebca3491a63f92",
+    "data/ledger-component-v3/source-families/warehouse_rollforward.py": "482cabe56ccd2abe338d15eeeacb2b8c78e09f1a782358cbff8689e162025d60"
+  },
+  "autonomous_delegation": false,
+  "c2c": false,
+  "formal_test": false,
+  "teacher_is_actual_model_trajectory": false
+}

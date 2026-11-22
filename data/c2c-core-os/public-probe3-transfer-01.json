@@ -1,0 +1,61 @@
+{
+  "id": "os-c2c-probe3-transfer-01",
+  "goal": "Bring the public execution state to a schedulable next step while preserving task dependencies, resource limits, and failure evidence.",
+  "public_background": {
+    "runtime": {
+      "cpu_slots": 8,
+      "gpu_slots": 0,
+      "memory_mb": 16384,
+      "max_parallel_tasks": 3,
+      "scheduling_policy": "A task is runnable only when all dependencies are terminal-success and its resource request fits the current free capacity."
+    },
+    "tasks": [
+      {
+        "id": "fetchdata",
+        "state": "READY",
+        "depends_on": [],
+        "cpu": 1,
+        "gpu": 0,
+        "memory_mb": 2048
+      },
+      {
+        "id": "train",
+        "state": "BLOCKED",
+        "depends_on": [
+          "fetchdata"
+        ],
+        "cpu": 4,
+        "gpu": 0,
+        "memory_mb": 6144
+      }
+    ],
+    "pending_decision": {
+      "field": "initial_transfer_seconds",
+      "question": "How many seconds will the initial dataset transfer take in total (dataset size divided by link throughput, plus the fixed handshake overhead)?",
+      "controller_note": "The pipeline timer is blocked until this duration is verified."
+    },
+    "events": [
+      {
+        "link": "primary",
+        "event": "profile",
+        "dataset_mb": 4800,
+        "throughput_mb_s": 60,
+        "handshake_overhead_s": 25
+      }
+    ]
+  },
+  "current_state": {
+    "free_cpu_slots": 7,
+    "free_gpu_slots": 0,
+    "free_memory_mb": 14336,
+    "active_tasks": [],
+    "failed_tasks": [],
+    "observation_boundary": "All facts above are public observations. No hidden expected schedule is supplied. The controller is waiting on the pending decision value; a bounded verification of that value is the useful delegation now. Do not claim a blocked task ran."
+  },
+  "probe": {
+    "family": "derived_intermediate",
+    "intended_question": "Total initial transfer seconds: size / throughput + handshake overhead.",
+    "expected_answer": 105,
+    "derivation": "4800 / 60 = 80; 80 + 25 = 105."
+  }
+}
